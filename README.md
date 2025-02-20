@@ -1,7 +1,7 @@
 # Thee-AIdvisors
 
-This should be a living document! If you encounter problems or missing instructions, please add them to this document in a PR. 
-
+This should be a living document! If you encounter problems or missing instructions, please add them to this document in a PR.  
+ 
 ## Table of Contents
 
 1. [About the Project](#about-the-project)
