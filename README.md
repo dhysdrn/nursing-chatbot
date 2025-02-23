@@ -8,6 +8,7 @@ This should be a living document! If you encounter problems or missing instructi
 2. [Local Development](#local-development-environment-setup)
 3. [Contributing to the Project](#contributing-to-the-project)
 4. [Style Guide](#style-guide)
+5. [Documentation](#documentation)
 
 ## About the Project
 
@@ -78,6 +79,7 @@ git push origin your-branch-name
 This section is to ensure consistency when adding code to the project.
 ** TBD BY TEAM **
 
+## Documentation
 ### Project Structure
 
 - Folder Structure
