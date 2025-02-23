@@ -33,7 +33,7 @@ This repository holds the code written by the team Thee AIdvisors (Noah Lanctot,
 
 ## Contributing to the Project
 
-1. Pull the Latest Changes
+1. Pull the Latest Changes  
 Before starting any work, ensure your local repository is up to date with the latest changes:
 ```sh
 git checkout main  # Switch to the main branch
