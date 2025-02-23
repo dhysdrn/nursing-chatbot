@@ -51,7 +51,7 @@ npm install
 ```
 4. Make Your Changes
 Make the necessary changes in the codebase.
-5. Commit Your Changes
+7. Commit Your Changes
 Commit your changes with a clear, descriptive message:
 ```sh
 git commit -m "Describe your changes here"
