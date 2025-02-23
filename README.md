@@ -39,24 +39,24 @@ Before starting any work, ensure your local repository is up to date with the la
 git checkout main  # Switch to the main branch
 git pull origin main  # Pull the latest changes
 ```
-2. Create a New Branch
+2. Create a New Branch  
 Create a new branch for your changes (choose a descriptive name):
 ```sh
 git checkout -b your-branch-name
 ```
-3. Install Dependencies
+3. Install Dependencies  
 If you haven't already installed the dependencies, do so now:
 ```sh
 npm install
 ```
-4. Make Your Changes
+4. Make Your Changes  
 Make the necessary changes in the codebase.
-7. Commit Your Changes
+7. Commit Your Changes  
 Commit your changes with a clear, descriptive message:
 ```sh
 git commit -m "Describe your changes here"
 ```
-6. Push Your Changes
+6. Push Your Changes  
 Push your changes to the repository:
 ```sh
 git push origin your-branch-name
