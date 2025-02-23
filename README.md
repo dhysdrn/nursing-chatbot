@@ -67,7 +67,7 @@ git push origin your-branch-name
 - Select your branch and submit the request.
 - Add a description of your changes and request a review from a team member.
 
-# Contribution Guidelines
+#### Contribution Guidelines
 
 - Ensure your code follows project standards and is well-documented.
 - Test your changes before submitting a pull request.
