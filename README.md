@@ -82,8 +82,10 @@ This section is to ensure consistency when adding code to the project.
 ## Documentation
 ### Project Structure
 
-- Folder Structure
-- Naming files/directories
+thee-aidvisors/
+│-- backend/    # Node.js backend
+│-- frontend/   # React Vite frontend
+│-- README.md   # Project documentation
 
 ### Code Formatting
 
