@@ -5,7 +5,7 @@ This should be a living document! If you encounter problems or missing instructi
 ## Table of Contents
 
 1. [About the Project](#about-the-project)
-2. [Local Development](#local-development)
+2. [Local Development](#local-development-environment-setup)
 3. [Contributing to the Project](#contributing-to-the-project)
 4. [Style Guide](#style-guide)
 
