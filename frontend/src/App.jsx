@@ -1,40 +1,52 @@
+import { useState } from "react";
+import ChatForm from "./components/ChatForm";
+import GreenRiverIcon from "./components/GreenRiverIcon";
+import ChatMessage from "./components/ChatMessage";
+
 const App = () => {
+  const [chatHistory, setChatHistory] = useState([]);
+
+  const generateBotResponse = (history) => {
+    console.log(history);
+  }
+
   return (
-    <div className="container">
-      <div className="chatbot-popup">
-        {/* ChatBot Header */}
-        <div className="chat-header">
-          <div className="header-info">
-            <h2 className="logo-text">ChatBot</h2>
+    <div>
+      <div className="container-left">
+        {/* insert instructions here - TODO by 2/26 end of the day*/}
+      </div>
+      <div className="container-right">
+        <div className="chatbot-popup">
+          {/* ChatBot Header */}
+          <div className="chat-header">
+            <div className="header-info">
+              <GreenRiverIcon />
+              <h2 className="logo-text">Advising Assistant</h2>
+            </div>
+            <button className="material-symbols-outlined">arrow_drop_down</button>
           </div>
-        </div>
 
-        {/* ChatBot Body */}
-        <div className="chat-body">
-          <div className="message bot-message">
-            <p className="message-text">
-              Hey there! <br />Type in any 
-              nursing questions and get a response! Your 
-              chats won’t be saved when you leave the site. 
-            </p>
-          </div>
-          <div className="message user-message">
-            <p className="message-text">
-            Lorem ipsum odor amet, consectetuer adipiscing elit. 
-            Dictum ad commodo nec lacinia lectus porttitor mauris. 
-            </p>
-          </div>
-        </div>
+          {/* ChatBot Body */}
+          <div className="chat-body">
+            <div className="message bot-message">
+              <p className="message-text">
+                Hey there! <br />Type in any 
+                nursing questions and get a response! Your 
+                chats won’t be saved when you leave the site. 
+              </p>
+            </div>
 
-        {/* ChatBot Footer */}
-        <div className="chat-footer">
-          <form action="#" className="chat-form">
-            <input type="text" placeholder="Type message here.."
-            className="message-input" required />
-            <button className="material-symbols-outlined">
-            keyboard_arrow_right
-            </button>          
-          </form>
+            {/* Loads messages */}
+            {chatHistory.map((chat, index) => (
+              <ChatMessage key={index} chat={chat} />
+            ))}
+
+          </div>
+
+          {/* ChatBot Footer */}
+          <div className="chat-footer">
+            <ChatForm chatHistory={chatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse} />
+          </div>
         </div>
       </div>
     </div>
