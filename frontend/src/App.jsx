@@ -13,7 +13,28 @@ const App = () => {
   return (
     <div>
       <div className="container-left">
-        {/* insert instructions here - TODO by 2/26 end of the day*/}
+      <h1>Welcome to the Chatbot!</h1>
+      <br></br>
+      <p>Please feel free to ask questions related to the <strong>nursing program</strong> and <strong>advising</strong>. Here are a few guidelines to help you get the best responses:</p>
+
+      <ul>
+        <li><strong>Ask about the nursing program</strong> – You can ask about admissions, course details, requirements, and more!</li>
+        <li><strong>Ask about advising</strong> – If you need help with course planning, schedules, or general academic advice, just let us know.</li>
+      </ul>
+      <br></br>
+        <h3>Important Reminders:</h3>
+       
+        <ul>
+          <li>The chatbot is designed to help with nursing program information and advising only.</li>
+          <li><strong>Please avoid asking unrelated questions.</strong> The chatbot may not respond to those or provide an accurate answer.</li>
+          <li>If you’re unsure whether your question is relevant, try to keep it focused on academic or program-related topics.</li>
+        </ul>
+        <br></br>
+        <h3>How to Use:</h3>
+        <ul>
+          <li>Simply type your question in the chatbox below.</li>
+          <li>If you don’t get an answer or need more help, feel free to ask in a different way or contact an advisor directly!</li>
+        </ul>
       </div>
       <div className="container-right">
         <div className="chatbot-popup">
