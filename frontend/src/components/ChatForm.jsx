@@ -15,7 +15,7 @@ const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
         
         setChatHistory(newHistory);
         
-        console.log("Updated chatHistory with user message:", newHistory);  // Debugging
+        console.log("Updated chatHistory with user message:", newHistory);  
 
         setTimeout(() => {
             const thinkingMessage = { role: "model", text: "Thinking..." };
