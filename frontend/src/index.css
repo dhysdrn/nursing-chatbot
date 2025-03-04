@@ -15,12 +15,22 @@ body {
   min-height: 100vh;
   background: linear-gradient(0deg, rgba(68,138,42,1) 0%, rgba(211,252,195,1) 60%);
 }
-
+.container-left {
+  position: fixed;
+  padding: 60px 55px;
+  left: 250px;
+  top: 125px;
+  width: 400px;
+  overflow: hidden;
+  background: #EFEFEF;
+  border-radius: 15px;
+  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
+  0 32px 64px -48px rgba(0, 0, 0, 0.5);
+}
 .chatbot-popup {
   position: fixed;
   right: 250px;
   bottom: 150px;
-  width: 420px;
   overflow: hidden;
   background: #EFEFEF;
   border-radius: 15px;

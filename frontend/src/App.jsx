@@ -7,13 +7,35 @@ const App = () => {
   const [chatHistory, setChatHistory] = useState([]);
 
   const generateBotResponse = (history) => {
-    console.log(history);
-  }
+    console.log("Generating response for:", history);
+    // Logic to generate the bot response
+    const botResponse = "This is a bot's response"; 
+    setChatHistory((prevHistory) => [
+      ...prevHistory,
+      { role: "model", text: botResponse },
+    ]);
+  };
 
   return (
     <div>
       <div className="container-left">
-        {/* insert instructions here - TODO by 2/26 end of the day*/}
+        <h1>Welcome to the Advising Chatbot!</h1>
+        <br />
+        <p>
+          We are here to help with anything related to the <strong>nursing
+          program</strong> and <strong>advising</strong>. Feel free to ask
+          anything, and we will do our best to provide the answers you need:
+        </p>
+
+        <ul>
+          <li>
+            <strong>About the nursing program</strong> – If you have questions
+            about admissions, courses, or requirements, just ask!
+          </li>
+          <li>
+            <strong>Advising</strong> – Need help with course planning, schedules, or academic advice? We’ve got you covered.
+          </li>
+        </ul>
       </div>
       <div className="container-right">
         <div className="chatbot-popup">
@@ -28,29 +50,23 @@ const App = () => {
 
           {/* ChatBot Body */}
           <div className="chat-body">
-            <div className="message bot-message">
-              <p className="message-text">
-                Hey there! <br />Type in any 
-                nursing questions and get a response! Your 
-                chats won’t be saved when you leave the site. 
-              </p>
-            </div>
-
-            {/* Loads messages */}
             {chatHistory.map((chat, index) => (
               <ChatMessage key={index} chat={chat} />
             ))}
-
           </div>
 
           {/* ChatBot Footer */}
           <div className="chat-footer">
-            <ChatForm chatHistory={chatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse} />
+            <ChatForm
+              chatHistory={chatHistory}
+              setChatHistory={setChatHistory}
+              generateBotResponse={generateBotResponse}
+            />
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default App;
