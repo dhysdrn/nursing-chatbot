@@ -3,12 +3,12 @@ const cors = require('cors');
 const scrapeData = require('./scraper');
 
 const app = express();
-const port = 5000;
+const port = 5001;
 
-app.use(cors()); 
-app.use(express.json()); 
+app.use(cors());
+app.use(express.json());
 
-// POST endpoint to handle user questions
+// POST endpoint to handle user questions 
 app.post('/ask', async (req, res) => {
   const userQuestion = req.body.question.toLowerCase();
 
@@ -21,6 +21,18 @@ app.post('/ask', async (req, res) => {
     }
   } else {
     res.json({ response: "Sorry, I didn't understand the question." });
+  }
+});
+
+// GET endpoint to fetch scraped data
+app.get('/scrape', async (req, res) => {
+  const scrapedData = await scrapeData();
+
+  if (scrapedData) {
+    res.json({ data: scrapedData });
+  } 
+  else {
+    res.status(500).json({ error: "Failed to scrape data" });
   }
 });
 
