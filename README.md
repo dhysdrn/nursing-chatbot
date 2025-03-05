@@ -29,8 +29,11 @@ This repository holds the code written by the team Thee AIdvisors (Noah Lanctot,
 1. Clone the project repository locally.
    `git clone https://github.com/InfiniteGmng/Thee-AIdvisors.git`
 2. Have the package manager `npm` installed ([npm](https://www.npmjs.com/)).
-3. In the terminal/command line, navigate to the frontend folder and install all frontend dependencies with `npm install`.
-4. Within the same frontend folder, run the project with `npm run dev`.
+3. In the terminal/command line, navigate to the backend folder and install all backend dependencies with `npm install`.
+4. Within the same backend folder, run the project with `node server.js`.
+5. In the terminal/command line, navigate to the frontend folder and install all frontend dependencies with `npm install`.
+6. Within the same frontend folder, run the project with `npm run dev`.
+7. Once both the backend and frontend are running, you can access the full application by visiting the frontend URL
 
 ## Contributing to the Project
 
