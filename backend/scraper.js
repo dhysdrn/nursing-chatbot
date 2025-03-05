@@ -1,32 +1,27 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const fs = require('fs');
 
 const scrapeData = async () => {
   try {
     const { data } = await axios.get('https://www.greenriver.edu/students/academics/degrees-programs/nursing/index.html'); 
     const $ = cheerio.load(data);
 
-    let results = [];
-    $('h2, h3, p, a').each((index, element) => {
-      if ($(element).is('a')) {
-        results.push({ text: $(element).text().trim(), link: $(element).attr('href') });
-      } else {
-        results.push({ text: $(element).text().trim() });
+    let admissionsInfo = [];
+
+    $('h2, h3, p').each((index, element) => {
+      const text = $(element).text().trim();
+      if (text.toLowerCase().includes('admission')) {
+        admissionsInfo.push(text);
       }
     });
 
-    console.log('✅ Scraped Data:', results); // Log data to check if scraping works
+    console.log('✅ Scraped Admissions Info:', admissionsInfo);
 
-    // Save to JSON file
-    fs.writeFileSync('scrapedData.json', JSON.stringify(results, null, 2));
-
-    return results;
+    return { admissionsInfo };
   } catch (error) {
     console.error('❌ Error scraping data:', error.message);
     return null;
   }
 };
 
-// Run immediately to test scraping
-scrapeData();
+module.exports = scrapeData;

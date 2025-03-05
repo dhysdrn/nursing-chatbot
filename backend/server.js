@@ -8,30 +8,27 @@ const port = 5001;
 app.use(cors());
 app.use(express.json());
 
-// POST endpoint to handle user questions 
 app.post('/ask', async (req, res) => {
   const userQuestion = req.body.question.toLowerCase();
 
   if (userQuestion.includes('admissions')) {
     const scrapedData = await scrapeData();
-    if (scrapedData) {
-      res.json({ response: scrapedData.admissionsInfo || "Sorry, I couldn't find the admissions info." });
+
+    if (scrapedData && scrapedData.admissionsInfo.length > 0) {
+      res.json({ response: scrapedData.admissionsInfo.join(" ") }); // Send as a string
     } else {
-      res.json({ response: "Sorry, something went wrong while fetching the information." });
+      res.json({ response: "Sorry, I couldn't find any admissions info." });
     }
   } else {
     res.json({ response: "Sorry, I didn't understand the question." });
   }
 });
 
-// GET endpoint to fetch scraped data
 app.get('/scrape', async (req, res) => {
   const scrapedData = await scrapeData();
-
   if (scrapedData) {
     res.json({ data: scrapedData });
-  } 
-  else {
+  } else {
     res.status(500).json({ error: "Failed to scrape data" });
   }
 });
