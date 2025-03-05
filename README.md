@@ -21,7 +21,8 @@ This repository holds the code written by the team Thee AIdvisors (Noah Lanctot,
   - [nodemon](https://www.npmjs.com/package/nodemon): Auto restart node app
   - [dotenv](https://www.npmjs.com/package/dotenv): Load environment variables
   - [cors](https://www.npmjs.com/package/cors): Provides middleware
-  - [React.js](https://react.dev/): Frontend (UI components, JS, HTML, CSS)
+  - [node-nlp](https://www.npmjs.com/package/node-nlp): Provides translation from user text to responses
+- [React.js](https://react.dev/): Frontend (UI components, JS, HTML, CSS)
   - [Vite](https://vite.dev/): frontend build tool
 
 ## Local Development Environment Setup
