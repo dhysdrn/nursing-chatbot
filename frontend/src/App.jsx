@@ -6,15 +6,26 @@ import ChatMessage from "./components/ChatMessage";
 const App = () => {
   const [chatHistory, setChatHistory] = useState([]);
 
-  const generateBotResponse = (history) => {
-    console.log("Generating response for:", history);
-    // Logic to generate the bot response
-    const botResponse = "This is a bot's response"; 
-    setChatHistory((prevHistory) => [
-      ...prevHistory,
-      { role: "model", text: botResponse },
-    ]);
-  };
+  const generateBotResponse = async (history) => {
+    const lastMessage = history[history.length - 1];
+  
+    try {
+      const response = await fetch("http://localhost:5001/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: lastMessage.text }),
+      });
+  
+      const data = await response.json();
+  
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        { role: "model", text: data.response },
+      ]);
+    } catch (error) {
+      console.error("Error fetching bot response:", error);
+    }
+  };  
 
   return (
     <div>
