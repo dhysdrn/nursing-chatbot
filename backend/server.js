@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const scrapeData = require('./scraper');
+import express from 'express';
+import cors from 'cors';
+import { scrapeData } from './scraper.js';
 
 const app = express();
 const port = 5001;

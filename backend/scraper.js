@@ -1,7 +1,7 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+import axios from 'axios';
+import * as cheerio from 'cheerio';
 
-const scrapeData = async () => {
+export const scrapeData = async () => {
   try {
     const { data } = await axios.get('https://www.greenriver.edu/students/academics/degrees-programs/nursing/index.html'); 
     const $ = cheerio.load(data);
@@ -23,5 +23,3 @@ const scrapeData = async () => {
     return null;
   }
 };
-
-module.exports = scrapeData;
