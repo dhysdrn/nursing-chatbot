@@ -1,6 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const scrapeData = require('./scraper');
+import express from 'express';
+import cors from 'cors';
+import { scrapeData } from './scraper.js';
+import { translate } from './nlpTranslator.js';
 
 const app = express();
 const port = 5001;
@@ -20,7 +21,12 @@ app.post('/ask', async (req, res) => {
       res.json({ response: "Sorry, I couldn't find any admissions info." });
     }
   } else {
-    res.json({ response: "Sorry, I didn't understand the question." });
+    const response = await translate(userQuestion);
+    if (response != undefined) {
+      res.json({ response: `${response}`});
+    } else {
+      res.json({ response: "Sorry, I didn't understand the question." });
+    }
   }
 });
 
