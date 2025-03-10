@@ -33,6 +33,24 @@ const summarizeContent = (question, intent, content) => {
   const lowerQuestion = question.toLowerCase();
   const lines = content.split("\n").filter((line) => line.trim());
 
+  if (intent === "agent.degrees") {
+    // Combine info from all degree-related headings
+    const degreeHeadings = [
+      "Nursing - Associate Degree",
+      "Nursing - Bachelor Degree",
+      "Nursing - Transfer Degree",
+    ];
+    let combinedContent = "";
+    degreeHeadings.forEach((heading) => {
+      if (nursingDataCache[heading]) {
+        combinedContent += `\n${heading}:\n${nursingDataCache[heading]}\n`;
+      }
+    });
+    return (
+      combinedContent.trim() || "Sorry, I couldn’t find detailed degree info."
+    );
+  }
+
   if (
     lowerQuestion.includes("what") ||
     lowerQuestion.includes("about") ||
@@ -63,7 +81,7 @@ app.post("/ask", async (req, res) => {
   const userQuestion = req.body.question || "";
   console.log(`Processing question: "${userQuestion}"`);
 
-  let response = await translate(userQuestion); // Fixed: userText -> userQuestion
+  let response = await translate(userQuestion);
   let answer = "";
 
   if (response && nursingDataCache) {

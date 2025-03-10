@@ -10,6 +10,7 @@ export const utterances = {
       "hey hey",
       "hello i need help",
       "what’s good",
+      "hola",
     ],
     response:
       "Hi there! I'm the GRC Nursing Chatbot. I can provide information about our different programs, degrees, events, and admissions.",
@@ -38,7 +39,7 @@ export const utterances = {
       "when can I apply",
       "how do I start applying",
     ],
-    heading: "Admission Requirements",
+    heading: "Practical Nursing - Applications and Admissions", // Updated to a specific admissions section
   },
   degrees: {
     phrases: [
@@ -52,7 +53,7 @@ export const utterances = {
       "what degrees does grc offer",
       "can you tell me about degrees",
     ],
-    heading: "Associate in Pre-Nursing, APreN-DTA/MRP", // Verify this matches a scraped heading
+    heading: "Nursing - Associate Degree", // Default to Associate Degree; we’ll combine others in server.js
   },
   bachelors: {
     phrases: [
@@ -62,7 +63,7 @@ export const utterances = {
       "bachelor’s degree",
       "do you have a bachelors",
     ],
-    heading: "LPN to BSN",
+    heading: "Nursing - Bachelor Degree", // Matches BSN info
   },
   programs: {
     phrases: [
@@ -73,7 +74,7 @@ export const utterances = {
       "what’s the nursing program like",
       "tell me about grc nursing",
     ],
-    heading: "About Our Programs",
+    heading: "Nursing - About Our Programs",
   },
   events: {
     phrases: [
@@ -88,7 +89,7 @@ export const utterances = {
       "tell me about open houses",
       "tell me about events",
     ],
-    heading: "Open Houses & Workshops",
+    heading: "Nursing - Open Houses & Workshops",
   },
   contact: {
     phrases: [
@@ -98,7 +99,7 @@ export const utterances = {
       "where do I get help",
       "nursing department contact",
     ],
-    heading: "Contact Information",
+    heading: "Nursing - Contact",
   },
   fallback: {
     phrases: ["idk", "not sure", "what", "huh", "no admissions", "ok fine"],
