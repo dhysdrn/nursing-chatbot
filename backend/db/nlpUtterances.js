@@ -52,7 +52,30 @@ export const utterances = {
       "what degrees does grc offer",
       "can you tell me about degrees",
     ],
-    heading: "Associate in Pre-Nursing, APreN-DTA/MRP", // Verify this matches a scraped heading
+    heading: "About Our Programs", // Changed to a broader section
+    filter: [
+      "degree",
+      "associate",
+      "bachelor",
+      "bsn",
+      "pre-nursing",
+      "practical nursing",
+    ], // Filters for general degree info
+  },
+  associate_degree: {
+    // New intent for specific associate degree queries
+    phrases: [
+      "tell me about the associate degree",
+      "associate in pre-nursing",
+      "apren-dta/mrp",
+      "practical nursing associates",
+    ],
+    heading: "About Our Programs",
+    filter: [
+      "associate in pre-nursing",
+      "apren-dta/mrp",
+      "practical nursing associates",
+    ], // Specific keywords
   },
   bachelors: {
     phrases: [
@@ -62,7 +85,18 @@ export const utterances = {
       "bachelor’s degree",
       "do you have a bachelors",
     ],
-    heading: "LPN to BSN",
+    heading: "About Our Programs", // Changed to a broader section
+    filter: ["bachelor", "bsn", "lpn to bsn", "bachelor of science"], // Filters for bachelor’s info
+  },
+  bsn_program: {
+    // New intent for specific BSN queries
+    phrases: [
+      "tell me about the bsn program",
+      "lpn to bsn",
+      "bachelor of science in nursing",
+    ],
+    heading: "About Our Programs",
+    filter: ["lpn to bsn", "bachelor of science in nursing", "bsn program"], // Specific keywords
   },
   programs: {
     phrases: [

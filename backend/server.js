@@ -25,38 +25,27 @@ const refreshNursingData = async () => {
 
 refreshNursingData();
 
-const summarizeContent = (question, intent, content) => {
+const summarizeContent = (question, intent, content, filterKeywords = []) => {
   if (!content || typeof content !== "string") {
     return "Sorry, I couldn’t find specific details for that question.";
   }
 
-  const lowerQuestion = question.toLowerCase();
   const lines = content.split("\n").filter((line) => line.trim());
 
-  if (
-    lowerQuestion.includes("what") ||
-    lowerQuestion.includes("about") ||
-    lowerQuestion.includes("tell me") ||
-    lowerQuestion === "admissions" ||
-    lowerQuestion === "degrees"
-  ) {
-    return lines.slice(0, 7).join("\n") || content;
-  } else if (
-    lowerQuestion.includes("how") &&
-    (lowerQuestion.includes("apply") || lowerQuestion.includes("get in"))
-  ) {
-    return "To apply, visit the Green River College website for the application process and requirements. You can also attend an Application Workshop—check the Events Page for dates!";
-  } else if (lowerQuestion.includes("where")) {
-    if (lastTopic === "events") {
-      return "Find event details on the Events Page of the Green River College website!";
-    } else if (lastTopic === "admissions") {
-      return "Check the Green River College website for admissions info or email nursing@greenriver.edu.";
-    }
-    return "Visit the Green River College website for more details.";
-  } else if (lowerQuestion.includes("more")) {
-    return content;
+  // Apply filter if keywords are provided
+  if (filterKeywords.length > 0) {
+    const relevantLines = lines.filter((line) =>
+      filterKeywords.some((keyword) =>
+        line.toLowerCase().includes(keyword.toLowerCase())
+      )
+    );
+    return relevantLines.length > 0
+      ? relevantLines.join("\n")
+      : "I couldn’t find specific information for that query.";
   }
-  return lines.join("\n") || content;
+
+  // Default response for unfiltered content
+  return lines.slice(0, 7).join("\n") || content;
 };
 
 app.post("/ask", async (req, res) => {
@@ -69,7 +58,8 @@ app.post("/ask", async (req, res) => {
   if (response && nursingDataCache) {
     const { intent, content } = response;
     lastTopic = intent.split("agent.")[1];
-    answer = summarizeContent(userQuestion, intent, content);
+    const filterKeywords = utterances[lastTopic]?.filter || [];
+    answer = summarizeContent(userQuestion, intent, content, filterKeywords);
   } else if (nursingDataCache) {
     const lowerQuestion = userQuestion.toLowerCase();
     const keywords = lowerQuestion.split(" ").filter((word) => word.length > 2);
