@@ -5,15 +5,15 @@ const fetchAndParsePage = async (url) => {
   try {
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
-    const pageTitle = $("title").text();
+    const pageTitle = $("title").text().trim() || "Unknown Page";
     const nursingData = {};
 
-    $("h2, h3").each((index, element) => {
+    $("h2, h3, h4").each((index, element) => {
       const headingText = $(element).text().trim();
       let content = "";
 
       let nextElement = $(element).next();
-      while (nextElement.length && !nextElement.is("h2, h3")) {
+      while (nextElement.length && !nextElement.is("h2, h3, h4")) {
         const tag = nextElement.prop("tagName").toLowerCase();
         if (tag === "p") {
           content += "\n" + nextElement.text().trim() + "\n";
@@ -37,22 +37,20 @@ const fetchAndParsePage = async (url) => {
 
     return nursingData;
   } catch (error) {
-    console.error(`Error scraping ${url}:`, error.message);
+    console.error(`❌ Error scraping ${url}:`, error.message);
     return {};
   }
 };
 
 export const scrapeData = async () => {
   try {
-    const { data } = await axios.get(
-      "https://www.greenriver.edu/students/academics/degrees-programs/nursing/index.html"
-    );
+    const baseUrl = "https://www.greenriver.edu";
+    const mainUrl = `${baseUrl}/students/academics/degrees-programs/nursing/index.html`;
+    const { data } = await axios.get(mainUrl);
     const $ = cheerio.load(data);
-    const mainPageData = await fetchAndParsePage(
-      "https://www.greenriver.edu/students/academics/degrees-programs/nursing/index.html"
-    );
+    const mainPageData = await fetchAndParsePage(mainUrl);
 
-    const linksToFollow = $(
+    const subpageLinks = $(
       "a[href^='/students/academics/degrees-programs/nursing/']"
     )
       .filter(
@@ -60,22 +58,22 @@ export const scrapeData = async () => {
           $(el).attr("href").endsWith(".html") ||
           $(el).attr("href").endsWith("/")
       )
-      .map((i, el) => `https://www.greenriver.edu${$(el).attr("href")}`)
-      .get();
+      .map((i, el) => {
+        const href = $(el).attr("href");
+        return href.startsWith("http") ? href : `${baseUrl}${href}`;
+      })
+      .get()
+      .filter((link, index, self) => self.indexOf(link) === index); // Remove duplicates
 
     const subPageData = await Promise.all(
-      linksToFollow.map((link) => fetchAndParsePage(link))
+      subpageLinks.map((link) => fetchAndParsePage(link))
     );
 
     const nursingData = { ...mainPageData };
-    subPageData.forEach((pageData) => {
-      Object.assign(nursingData, pageData);
-    });
+    subPageData.forEach((pageData) => Object.assign(nursingData, pageData));
 
-    console.log(
-      "✅ Scraped Nursing Data:",
-      JSON.stringify(nursingData, null, 2)
-    );
+    console.log("✅ Scraped Headings:", Object.keys(nursingData));
+    console.log("✅ Full Scraped Data:", JSON.stringify(nursingData, null, 2));
     return { nursingData };
   } catch (error) {
     console.error("❌ Error scraping data:", error.message);

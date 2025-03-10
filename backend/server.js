@@ -25,41 +25,91 @@ const refreshNursingData = async () => {
 
 refreshNursingData();
 
-const summarizeContent = (question, intent, content, filterKeywords = []) => {
+const summarizeContent = (question, intent, content) => {
   if (!content || typeof content !== "string") {
     return "Sorry, I couldn’t find specific details for that question.";
   }
 
+  const lowerQuestion = question.toLowerCase();
   const lines = content.split("\n").filter((line) => line.trim());
 
-  // Apply filter if keywords are provided
-  if (filterKeywords.length > 0) {
+  // Specific intent handling
+  if (intent === "agent.admissions") {
+    const admissionKeywords = [
+      "apply",
+      "admission",
+      "requirements",
+      "eligibility",
+    ];
     const relevantLines = lines.filter((line) =>
-      filterKeywords.some((keyword) =>
-        line.toLowerCase().includes(keyword.toLowerCase())
-      )
+      admissionKeywords.some((keyword) => line.toLowerCase().includes(keyword))
     );
     return relevantLines.length > 0
       ? relevantLines.join("\n")
-      : "I couldn’t find specific information for that query.";
+      : lines.slice(0, 7).join("\n") || content;
+  } else if (
+    intent === "agent.degrees" ||
+    intent === "agent.associate_degree" ||
+    intent === "agent.bachelors" ||
+    intent === "agent.bsn_program"
+  ) {
+    const degreeKeywords = [
+      "degree",
+      "associate",
+      "bachelor",
+      "bsn",
+      "program",
+    ];
+    const relevantLines = lines.filter((line) =>
+      degreeKeywords.some((keyword) => line.toLowerCase().includes(keyword))
+    );
+    return relevantLines.length > 0
+      ? relevantLines.join("\n")
+      : lines.slice(0, 7).join("\n") || content;
+  } else if (intent === "agent.events") {
+    const eventKeywords = [
+      "event",
+      "open house",
+      "workshop",
+      "date",
+      "schedule",
+    ];
+    const relevantLines = lines.filter((line) =>
+      eventKeywords.some((keyword) => line.toLowerCase().includes(keyword))
+    );
+    return relevantLines.length > 0
+      ? relevantLines.join("\n")
+      : lines.slice(0, 7).join("\n") || content;
   }
 
-  // Default response for unfiltered content
-  return lines.slice(0, 7).join("\n") || content;
+  // Default: Summarize based on question keywords
+  if (
+    lowerQuestion.includes("what") ||
+    lowerQuestion.includes("about") ||
+    lowerQuestion.includes("tell me")
+  ) {
+    return lines.slice(0, 7).join("\n") || content;
+  } else if (lowerQuestion.includes("how") && lowerQuestion.includes("apply")) {
+    return (
+      lines.filter((line) => line.toLowerCase().includes("apply")).join("\n") ||
+      content
+    );
+  }
+
+  return lines.join("\n") || content;
 };
 
 app.post("/ask", async (req, res) => {
   const userQuestion = req.body.question || "";
   console.log(`Processing question: "${userQuestion}"`);
 
-  let response = await translate(userQuestion); // Fixed: userText -> userQuestion
+  let response = await translate(userQuestion);
   let answer = "";
 
   if (response && nursingDataCache) {
     const { intent, content } = response;
     lastTopic = intent.split("agent.")[1];
-    const filterKeywords = utterances[lastTopic]?.filter || [];
-    answer = summarizeContent(userQuestion, intent, content, filterKeywords);
+    answer = summarizeContent(userQuestion, intent, content);
   } else if (nursingDataCache) {
     const lowerQuestion = userQuestion.toLowerCase();
     const keywords = lowerQuestion.split(" ").filter((word) => word.length > 2);
@@ -111,8 +161,8 @@ app.post("/ask", async (req, res) => {
     answer = "Sorry, I couldn’t load the data. Please try again!";
   }
 
-  console.log(`Response: "${answer.slice(0, 100)}..."`);
-  res.json({ response: answer });
+  console.log(`Response: "${answer}"`); // Log full response
+  res.json({ response: answer }); // Send full response
 });
 
 app.listen(port, () => {

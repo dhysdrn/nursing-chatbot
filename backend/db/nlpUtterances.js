@@ -38,7 +38,7 @@ export const utterances = {
       "when can I apply",
       "how do I start applying",
     ],
-    heading: "Admission Requirements",
+    heading: "Practical Nursing - Applications and Admissions", // Specific to practical nursing admissions; could also use "bsn-nursing - Applications and Admissions" if broader context needed
   },
   degrees: {
     phrases: [
@@ -52,30 +52,16 @@ export const utterances = {
       "what degrees does grc offer",
       "can you tell me about degrees",
     ],
-    heading: "About Our Programs", // Changed to a broader section
-    filter: [
-      "degree",
-      "associate",
-      "bachelor",
-      "bsn",
-      "pre-nursing",
-      "practical nursing",
-    ], // Filters for general degree info
+    heading: "Nursing - About Our Programs", // Broad overview of all programs/degrees
   },
   associate_degree: {
-    // New intent for specific associate degree queries
     phrases: [
       "tell me about the associate degree",
       "associate in pre-nursing",
       "apren-dta/mrp",
       "practical nursing associates",
     ],
-    heading: "About Our Programs",
-    filter: [
-      "associate in pre-nursing",
-      "apren-dta/mrp",
-      "practical nursing associates",
-    ], // Specific keywords
+    heading: "Nursing - Associate Degree", // Main page section for associate degrees
   },
   bachelors: {
     phrases: [
@@ -85,18 +71,15 @@ export const utterances = {
       "bachelor’s degree",
       "do you have a bachelors",
     ],
-    heading: "About Our Programs", // Changed to a broader section
-    filter: ["bachelor", "bsn", "lpn to bsn", "bachelor of science"], // Filters for bachelor’s info
+    heading: "Nursing - Bachelor Degree", // Main page section for bachelor degrees
   },
   bsn_program: {
-    // New intent for specific BSN queries
     phrases: [
       "tell me about the bsn program",
       "lpn to bsn",
       "bachelor of science in nursing",
     ],
-    heading: "About Our Programs",
-    filter: ["lpn to bsn", "bachelor of science in nursing", "bsn program"], // Specific keywords
+    heading: "bsn-nursing - LPN to BSN Program", // Specific BSN subpage heading
   },
   programs: {
     phrases: [
@@ -107,7 +90,7 @@ export const utterances = {
       "what’s the nursing program like",
       "tell me about grc nursing",
     ],
-    heading: "About Our Programs",
+    heading: "Nursing - About Our Programs",
   },
   events: {
     phrases: [
@@ -122,7 +105,7 @@ export const utterances = {
       "tell me about open houses",
       "tell me about events",
     ],
-    heading: "Open Houses & Workshops",
+    heading: "Nursing Events - Nursing Open Houses", // Specific to open houses; could also use "Nursing Events - Application Workshops" for variety
   },
   contact: {
     phrases: [
@@ -132,7 +115,7 @@ export const utterances = {
       "where do I get help",
       "nursing department contact",
     ],
-    heading: "Contact Information",
+    heading: "Nursing - Contact",
   },
   fallback: {
     phrases: ["idk", "not sure", "what", "huh", "no admissions", "ok fine"],

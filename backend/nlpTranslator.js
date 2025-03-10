@@ -66,7 +66,7 @@ export const translate = async (userText) => {
   );
 
   if (intent === "None" || confidence < 0.6) {
-    return null;
+    return null; // Trigger fallback in server.js
   } else {
     return { intent, content: response.answer };
   }
