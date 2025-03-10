@@ -1,25 +1,91 @@
-import axios from 'axios';
-import * as cheerio from 'cheerio';
+import axios from "axios";
+import * as cheerio from "cheerio";
 
-export const scrapeData = async () => {
+const fetchAndParsePage = async (url) => {
   try {
-    const { data } = await axios.get('https://www.greenriver.edu/students/academics/degrees-programs/nursing/index.html'); 
+    const { data } = await axios.get(url);
     const $ = cheerio.load(data);
+    const pageTitle = $("title").text().trim() || "Unknown Page";
+    const nursingData = {};
 
-    let admissionsInfo = [];
+    $("h2, h3, h4").each((index, element) => {
+      const headingText = $(element).text().trim();
+      let content = "";
 
-    $('h2, h3, p').each((index, element) => {
-      const text = $(element).text().trim();
-      if (text.toLowerCase().includes('admission')) {
-        admissionsInfo.push(text);
+      let nextElement = $(element).next();
+      while (nextElement.length && !nextElement.is("h2, h3, h4")) {
+        const tag = nextElement.prop("tagName").toLowerCase();
+        if (tag === "p") {
+          content += "\n" + nextElement.text().trim() + "\n";
+        } else if (tag === "ul" || tag === "ol") {
+          nextElement.find("li").each((j, li) => {
+            content += "- " + $(li).text().trim() + "\n";
+          });
+        } else if (tag === "div" || tag === "span") {
+          content += "\n" + nextElement.text().trim() + "\n";
+        } else {
+          content += nextElement.text().trim() + " ";
+        }
+        nextElement = nextElement.next();
+      }
+
+      if (content.trim()) {
+        const fullHeading = `${pageTitle} - ${headingText}`;
+        nursingData[fullHeading] = content.trim();
       }
     });
 
-    console.log('✅ Scraped Admissions Info:', admissionsInfo);
-
-    return { admissionsInfo };
+    return nursingData;
   } catch (error) {
-    console.error('❌ Error scraping data:', error.message);
+    console.error(`❌ Error scraping ${url}:`, error.message);
+    return {};
+  }
+};
+
+export const scrapeData = async () => {
+  try {
+    const baseUrl = "https://www.greenriver.edu";
+    const mainUrl = `${baseUrl}/students/academics/degrees-programs/nursing/index.html`;
+    const additionalUrls = [
+      `${baseUrl}/students/academics/degrees-programs/nursing/bsn/bsnfaqs.html`,
+      `${baseUrl}/students/academics/degrees-programs/nursing/practical-nursing/application/faqs.html`,
+    ];
+
+    const { data } = await axios.get(mainUrl);
+    const $ = cheerio.load(data);
+    const mainPageData = await fetchAndParsePage(mainUrl);
+
+    const subpageLinks = $(
+      "a[href^='/students/academics/degrees-programs/nursing/']"
+    )
+      .filter(
+        (i, el) =>
+          $(el).attr("href").endsWith(".html") ||
+          $(el).attr("href").endsWith("/")
+      )
+      .map((i, el) => {
+        const href = $(el).attr("href");
+        return href.startsWith("http") ? href : `${baseUrl}${href}`;
+      })
+      .get()
+      .filter((link, index, self) => self.indexOf(link) === index);
+
+    const allUrls = [...new Set([...subpageLinks, ...additionalUrls])];
+    const subPageData = await Promise.all(
+      allUrls.map((link) => fetchAndParsePage(link))
+    );
+
+    const nursingData = { ...mainPageData };
+    subPageData.forEach((pageData) => Object.assign(nursingData, pageData));
+
+    console.log(
+      "✅ Available headings in nursingDataCache:",
+      Object.keys(nursingData)
+    );
+    console.log("✅ Nursing data cache refreshed");
+    return { nursingData };
+  } catch (error) {
+    console.error("❌ Error scraping data:", error.message);
     return null;
   }
 };
