@@ -103,66 +103,67 @@ app.post("/ask", async (req, res) => {
   const userQuestion = req.body.question || "";
   console.log(`Processing question: "${userQuestion}"`);
 
-  let response = await translate(userQuestion);
+  let response = await translate(userQuestion); // NLP intent matching
   let answer = "";
 
   if (response && nursingDataCache) {
     const { intent, content } = response;
     lastTopic = intent.split("agent.")[1];
-    answer = summarizeContent(userQuestion, intent, content);
-  } else if (nursingDataCache) {
+
+    if (intent === "agent.financial") {
+      // Search for financial-related headings
+      const financialHeadings = Object.keys(nursingDataCache).filter(
+        (heading) =>
+          heading.toLowerCase().includes("costs and financial information") ||
+          heading.toLowerCase().includes("funding opportunities")
+      );
+      if (financialHeadings.length > 0) {
+        answer = financialHeadings
+          .map((heading) => nursingDataCache[heading])
+          .join("\n\n");
+      } else {
+        answer =
+          "I couldn't find specific financial information. Please check the program pages for details.";
+      }
+    } else {
+      // Handle other intents (e.g., admissions, greetings)
+      answer = summarizeContent(userQuestion, intent, content);
+    }
+  } else {
+    // Fallback logic for None intent or low confidence
     const lowerQuestion = userQuestion.toLowerCase();
-    const keywords = lowerQuestion.split(" ").filter((word) => word.length > 2);
+    const keywords = lowerQuestion
+      .split(" ")
+      .filter(
+        (word) =>
+          word.length > 2 &&
+          !["tell", "about", "what", "how", "me"].includes(word)
+      );
     let relevantContent = "";
 
-    if (
-      lowerQuestion.includes("more") &&
-      lastTopic &&
-      utterances[lastTopic] &&
-      (utterances[lastTopic].response ||
-        nursingDataCache[utterances[lastTopic].heading])
-    ) {
-      relevantContent =
-        utterances[lastTopic].response ||
-        nursingDataCache[utterances[lastTopic].heading];
-    } else {
-      for (const [key, value] of Object.entries(utterances)) {
-        if (value.phrases.includes(lowerQuestion)) {
-          relevantContent = value.response || nursingDataCache[value.heading];
-          lastTopic = key;
+    if (keywords.length > 0) {
+      for (const [heading, content] of Object.entries(nursingDataCache)) {
+        const lowerHeading = heading.toLowerCase();
+        const lowerContent = content.toLowerCase();
+        if (
+          keywords.some(
+            (keyword) =>
+              lowerHeading.includes(keyword) || lowerContent.includes(keyword)
+          )
+        ) {
+          relevantContent = content;
           break;
-        }
-      }
-      if (!relevantContent) {
-        for (const [heading, content] of Object.entries(nursingDataCache)) {
-          const lowerHeading = heading.toLowerCase();
-          const lowerContent = content.toLowerCase();
-          if (
-            keywords.some(
-              (keyword) =>
-                lowerHeading.includes(keyword) || lowerContent.includes(keyword)
-            )
-          ) {
-            relevantContent = content;
-            lastTopic =
-              Object.keys(utterances).find(
-                (k) => utterances[k].heading === heading
-              ) || heading;
-            break;
-          }
         }
       }
     }
 
     answer = relevantContent
       ? summarizeContent(userQuestion, null, relevantContent.trim())
-      : "Hmm, I couldn’t find that. Try asking about programs, admissions, degrees, or events!";
-  } else {
-    answer = "Sorry, I couldn’t load the data. Please try again!";
+      : utterances.fallback.response;
   }
 
   console.log(`Response: "${answer}"`); // Log full response
-  res.json({ response: answer }); // Send full response
+  res.json({ response: answer }); // Send full response to client
 });
 
 app.listen(port, () => {
