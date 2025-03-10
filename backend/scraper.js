@@ -1,10 +1,54 @@
+import axios from "axios";
+import * as cheerio from "cheerio";
+
+const fetchAndParsePage = async (url) => {
+  try {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+    const pageTitle = $("title").text().trim() || "Unknown Page";
+    const nursingData = {};
+
+    $("h2, h3, h4").each((index, element) => {
+      const headingText = $(element).text().trim();
+      let content = "";
+
+      let nextElement = $(element).next();
+      while (nextElement.length && !nextElement.is("h2, h3, h4")) {
+        const tag = nextElement.prop("tagName").toLowerCase();
+        if (tag === "p") {
+          content += "\n" + nextElement.text().trim() + "\n";
+        } else if (tag === "ul" || tag === "ol") {
+          nextElement.find("li").each((j, li) => {
+            content += "- " + $(li).text().trim() + "\n";
+          });
+        } else if (tag === "div" || tag === "span") {
+          content += "\n" + nextElement.text().trim() + "\n";
+        } else {
+          content += nextElement.text().trim() + " ";
+        }
+        nextElement = nextElement.next();
+      }
+
+      if (content.trim()) {
+        const fullHeading = `${pageTitle} - ${headingText}`;
+        nursingData[fullHeading] = content.trim();
+      }
+    });
+
+    return nursingData;
+  } catch (error) {
+    console.error(`❌ Error scraping ${url}:`, error.message);
+    return {};
+  }
+};
+
 export const scrapeData = async () => {
   try {
     const baseUrl = "https://www.greenriver.edu";
     const mainUrl = `${baseUrl}/students/academics/degrees-programs/nursing/index.html`;
     const additionalUrls = [
-      "https://www.greenriver.edu/students/academics/degrees-programs/nursing/bsn/bsnfaqs.html",
-      "https://www.greenriver.edu/students/academics/degrees-programs/nursing/practical-nursing/application/faqs.html",
+      `${baseUrl}/students/academics/degrees-programs/nursing/bsn/bsnfaqs.html`,
+      `${baseUrl}/students/academics/degrees-programs/nursing/practical-nursing/application/faqs.html`,
     ];
 
     const { data } = await axios.get(mainUrl);
@@ -34,7 +78,11 @@ export const scrapeData = async () => {
     const nursingData = { ...mainPageData };
     subPageData.forEach((pageData) => Object.assign(nursingData, pageData));
 
-    console.log("✅ Scraped Headings:", Object.keys(nursingData));
+    console.log(
+      "✅ Available headings in nursingDataCache:",
+      Object.keys(nursingData)
+    );
+    console.log("✅ Nursing data cache refreshed");
     return { nursingData };
   } catch (error) {
     console.error("❌ Error scraping data:", error.message);
