@@ -17,7 +17,7 @@ const initializeNlp = async () => {
   console.log(
     "✅ Available headings in nursingDataCache:",
     Object.keys(nursingDataCache)
-  ); // Add this
+  ); 
 
   const container = await containerBootstrap();
   container.use(Nlp);
