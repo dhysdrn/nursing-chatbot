@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ChatForm from "./components/ChatForm";
 import GreenRiverIcon from "./components/GreenRiverIcon";
 import ChatMessage from "./components/ChatMessage";
 
 const App = () => {
   const [chatHistory, setChatHistory] = useState([]);
+  const chatBodyRef = useRef();
 
   const generateBotResponse = async (history) => {
     const lastMessage = history[history.length - 1];
@@ -26,6 +27,10 @@ const App = () => {
       console.error("Error fetching bot response:", error);
     }
   };  
+
+  useEffect(() => {
+    chatBodyRef.current.scrollTo({top:chatBodyRef.current.scrollHeight, behavior: "smooth"});
+  }, [chatHistory]);
 
   return (
     <div>
@@ -60,7 +65,7 @@ const App = () => {
           </div>
 
           {/* ChatBot Body */}
-          <div className="chat-body">
+          <div ref={chatBodyRef} className="chat-body">
             {chatHistory.map((chat, index) => (
               <ChatMessage key={index} chat={chat} />
             ))}

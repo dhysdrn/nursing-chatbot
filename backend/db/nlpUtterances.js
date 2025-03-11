@@ -39,7 +39,7 @@ export const utterances = {
       "when can I apply",
       "how do I start applying",
     ],
-    heading: "Practical Nursing - Applications and Admissions", // Updated to a specific admissions section
+    heading: "Practical Nursing - Applications and Admissions", 
   },
   degrees: {
     phrases: [
@@ -53,7 +53,7 @@ export const utterances = {
       "what degrees does grc offer",
       "can you tell me about degrees",
     ],
-    heading: "Nursing - Associate Degree", // Default to Associate Degree; we’ll combine others in server.js
+    heading: "Nursing - Associate Degree", 
   },
   bachelors: {
     phrases: [
@@ -63,7 +63,7 @@ export const utterances = {
       "bachelor’s degree",
       "do you have a bachelors",
     ],
-    heading: "Nursing - Bachelor Degree", // Matches BSN info
+    heading: "Nursing - Bachelor Degree", 
   },
   programs: {
     phrases: [
@@ -106,14 +106,35 @@ export const utterances = {
     response:
       "Oops, didn’t catch that right! What do you want to know about—nursing programs, admissions, degrees, events? Give me a nudge!",
   },
+  thankyou: {
+    phrases: ["thank you", "thanks", "thanks a lot", "thank you so much", "many thanks"],
+    response: "You're welcome! Let me know if you need any more help!",
+  },
 };
 
 export const getUtterancesForHeading = (heading) => {
-  const lowerHeading = heading.toLowerCase();
+  const lowerHeading = heading.toLowerCase(); 
+  console.log(`Looking for heading: ${lowerHeading}`);  
+
   for (const [key, value] of Object.entries(utterances)) {
-    if (value.heading && lowerHeading.includes(key)) {
-      return value.phrases;
+    if (value.heading) {
+      const headingMatch = value.heading.toLowerCase();  
+      console.log(`Comparing with: ${headingMatch}`);  
+      
+      if (lowerHeading.includes(headingMatch)) {
+        console.log(`Match found! Returning phrases: ${value.phrases}`);  
+        return value.phrases;
+      }
     }
   }
-  return [];
+ 
+  console.log("No match found. Returning fallback or inquiry responses.");  
+  const fallback = utterances.fallback.phrases;
+  const inquiries = [
+    "What would you like to know about our nursing programs?",
+    "Can I assist you with something else?",
+    "What can I help you with today?",
+  ];
+
+  return [...fallback, ...inquiries];
 };

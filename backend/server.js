@@ -34,7 +34,6 @@ const summarizeContent = (question, intent, content) => {
   const lines = content.split("\n").filter((line) => line.trim());
 
   if (intent === "agent.degrees") {
-    // Combine info from all degree-related headings
     const degreeHeadings = [
       "Nursing - Associate Degree",
       "Nursing - Bachelor Degree",
