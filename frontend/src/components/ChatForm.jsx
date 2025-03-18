@@ -1,8 +1,20 @@
 import { useRef } from "react";
 
+/**
+ * ChatForm component for handling user input and updating chat history.
+ * @param {Object} props - Component props.
+ * @param {Array} props.chatHistory - The current chat history.
+ * @param {Function} props.setChatHistory - Function to update chat history.
+ * @param {Function} props.generateBotResponse - Function to generate a bot response.
+ * @returns {JSX.Element} The ChatForm component.
+ */
 const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
     const inputRef = useRef();
 
+    /**
+     * Handles form submission by sending user input to chat history and triggering bot response.
+     * @param {Event} e - The form submit event.
+     */
     const handleFormSubmit = (e) => {
         e.preventDefault();
         const userMessage = inputRef.current.value.trim();
@@ -15,11 +27,11 @@ const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
         setChatHistory(newHistory);
         console.log("Updated chatHistory with user message:", newHistory);  
 
+        // Display "Thinking..." while waiting for a bot response
         const thinkingMessage = { role: "model", text: "Thinking." };
         setChatHistory((prevHistory) => [...prevHistory, thinkingMessage]);
         console.log("Added 'Thinking.' to chatHistory");
 
-       
         let dotCount = 1;
         const intervalId = setInterval(() => {
             dotCount = (dotCount % 3) + 1; 

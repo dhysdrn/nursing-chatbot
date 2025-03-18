@@ -13,6 +13,9 @@ app.use(express.json());
 let nursingDataCache = null;
 let lastTopic = null;
 
+/**
+ * Fetches and refreshes the nursing data cache from the scraper.
+ */
 const refreshNursingData = async () => {
   const scrapedData = await scrapeData();
   if (scrapedData && scrapedData.nursingData) {
@@ -25,6 +28,13 @@ const refreshNursingData = async () => {
 
 refreshNursingData();
 
+/**
+ * Summarizes the content based on user question intent.
+ * @param {string} question - The user's question.
+ * @param {string} intent - The identified intent of the question.
+ * @param {string} content - The content relevant to the question.
+ * @returns {string} A summarized response based on the question and content.
+ */
 const summarizeContent = (question, intent, content) => {
   if (!content || typeof content !== "string") {
     return "Sorry, I couldn’t find specific details for that question.";
@@ -76,6 +86,9 @@ const summarizeContent = (question, intent, content) => {
   return lines.join("\n") || content;
 };
 
+/**
+ * Handles incoming user questions and provides responses based on cached nursing data.
+ */
 app.post("/ask", async (req, res) => {
   const userQuestion = req.body.question || "";
   console.log(`Processing question: "${userQuestion}"`);
@@ -142,6 +155,9 @@ app.post("/ask", async (req, res) => {
   res.json({ response: answer });
 });
 
+/**
+ * Starts the Express server.
+ */
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
