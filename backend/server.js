@@ -25,6 +25,38 @@ const refreshNursingData = async () => {
 
 refreshNursingData();
 
+// Helper function to split long text into shorter lines at logical breaks
+const splitLongText = (text, maxLength = 60) => {
+  if (text.length <= maxLength) return text;
+  const parts = [];
+  let currentLine = "";
+  const sentences = text.split(/(?<=[.,])\s+/); // Split at periods/commas followed by space
+  for (const sentence of sentences) {
+    if ((currentLine + sentence).length <= maxLength) {
+      currentLine += (currentLine ? " " : "") + sentence;
+    } else {
+      if (currentLine) parts.push(currentLine);
+      currentLine = sentence;
+      if (currentLine.length > maxLength) {
+        // If a single sentence is too long, split at spaces
+        const words = currentLine.split(" ");
+        let tempLine = "";
+        for (const word of words) {
+          if ((tempLine + word).length <= maxLength) {
+            tempLine += (tempLine ? " " : "") + word;
+          } else {
+            parts.push(tempLine);
+            tempLine = word;
+          }
+        }
+        if (tempLine) currentLine = tempLine;
+      }
+    }
+  }
+  if (currentLine) parts.push(currentLine);
+  return parts.join("\n");
+};
+
 const summarizeContent = (question, intent, content) => {
   if (!content || typeof content !== "string") {
     return "Sorry, I couldn’t find specific details for that question.";
@@ -42,13 +74,21 @@ const summarizeContent = (question, intent, content) => {
     let combinedContent = "";
     degreeHeadings.forEach((heading) => {
       if (nursingDataCache[heading]) {
-        combinedContent += `\n${heading}:\n${nursingDataCache[heading]}\n`;
+        const sectionLines = nursingDataCache[heading]
+          .split("\n")
+          .filter((line) => line.trim())
+          .map((line) => splitLongText(line, 60)); // Split lines longer than 60 chars
+        combinedContent += `${heading}:\n\n${sectionLines.join("\n")}\n\n`;
       }
     });
     return (
       combinedContent.trim() || "Sorry, I couldn’t find detailed degree info."
     );
   }
+
+  const formattedContent = lines
+    .map((line) => splitLongText(line, 60))
+    .join("\n");
 
   if (
     lowerQuestion.includes("what") ||
@@ -57,23 +97,42 @@ const summarizeContent = (question, intent, content) => {
     lowerQuestion === "admissions" ||
     lowerQuestion === "degrees"
   ) {
-    return lines.slice(0, 7).join("\n") || content;
+    return formattedContent;
   } else if (
     lowerQuestion.includes("how") &&
     (lowerQuestion.includes("apply") || lowerQuestion.includes("get in"))
   ) {
-    return "To apply, visit the Green River College website for the application process and requirements. You can also attend an Application Workshop—check the Events Page for dates!";
+    return (
+      splitLongText(
+        "To apply, visit the Green River College website for the application process and requirements.",
+        60
+      ) +
+      "\n" +
+      splitLongText(
+        "You can also attend an Application Workshop—check the Events Page for dates!",
+        60
+      )
+    );
   } else if (lowerQuestion.includes("where")) {
     if (lastTopic === "events") {
-      return "Find event details on the Events Page of the Green River College website!";
+      return splitLongText(
+        "Find event details on the Events Page of the Green River College website!",
+        60
+      );
     } else if (lastTopic === "admissions") {
-      return "Check the Green River College website for admissions info or email nursing@greenriver.edu.";
+      return splitLongText(
+        "Check the Green River College website for admissions info or email nursing@greenriver.edu.",
+        60
+      );
     }
-    return "Visit the Green River College website for more details.";
+    return splitLongText(
+      "Visit the Green River College website for more details.",
+      60
+    );
   } else if (lowerQuestion.includes("more")) {
-    return content;
+    return formattedContent;
   }
-  return lines.join("\n") || content;
+  return formattedContent;
 };
 
 app.post("/ask", async (req, res) => {
@@ -133,9 +192,17 @@ app.post("/ask", async (req, res) => {
 
     answer = relevantContent
       ? summarizeContent(userQuestion, null, relevantContent.trim())
-      : "Hmm, I couldn’t find that. Try asking about programs, admissions, degrees, or events!";
+      : splitLongText("Hmm, I couldn’t find that.") +
+        "\n" +
+        splitLongText(
+          "Try asking about programs, admissions, degrees, or events!",
+          60
+        );
   } else {
-    answer = "Sorry, I couldn’t load the data. Please try again!";
+    answer =
+      splitLongText("Sorry, I couldn’t load the data.") +
+      "\n" +
+      splitLongText("Please try again!");
   }
 
   console.log(`Response: "${answer.slice(0, 100)}..."`);
