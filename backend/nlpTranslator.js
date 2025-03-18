@@ -7,6 +7,10 @@ import { utterances } from "./db/nlpUtterances.js";
 let nlpInstance = null;
 let nursingDataCache = null;
 
+/**
+ * Initializes the NLP instance and loads the nursing data from the scraper.
+ * @returns {Promise<boolean>} True if initialization is successful, otherwise false.
+ */
 const initializeNlp = async () => {
   const scrapedData = await scrapeData();
   if (!scrapedData || !scrapedData.nursingData) {
@@ -52,6 +56,11 @@ const initializeNlp = async () => {
   return true;
 };
 
+/**
+ * Processes user input and returns the corresponding NLP response.
+ * @param {string} userText - The user's input text.
+ * @returns {Promise<Object|null>} The response containing the detected intent and answer, or null if confidence is low.
+ */
 export const translate = async (userText) => {
   if (!nlpInstance || !nursingDataCache) {
     const initialized = await initializeNlp();
