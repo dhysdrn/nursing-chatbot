@@ -11,6 +11,7 @@ import ChatMessage from "./components/ChatMessage";
 const App = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const chatBodyRef = useRef();
+  const fetchURL = import.meta.env.VITE_FETCH_URL;
 
   /**
    * Sends the latest user message to the server and updates chat history with the bot's response.
@@ -20,7 +21,7 @@ const App = () => {
     const lastMessage = history[history.length - 1];
   
     try {
-      const response = await fetch("http://localhost:5001/ask", {
+      const response = await fetch(fetchURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: lastMessage.text }),
