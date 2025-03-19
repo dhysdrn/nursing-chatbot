@@ -1,6 +1,11 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 
+/**
+ * Fetches and parses a webpage to extract nursing-related data.
+ * @param {string} url - The URL of the page to scrape.
+ * @returns {Promise<Object>} An object containing extracted headings and their associated content.
+ */
 const fetchAndParsePage = async (url) => {
   try {
     const { data } = await axios.get(url);
@@ -42,6 +47,10 @@ const fetchAndParsePage = async (url) => {
   }
 };
 
+/**
+ * Scrapes data from the Green River College nursing program webpages.
+ * @returns {Promise<Object|null>} An object containing scraped nursing data, or null if an error occurs.
+ */
 export const scrapeData = async () => {
   try {
     const baseUrl = "https://www.greenriver.edu";

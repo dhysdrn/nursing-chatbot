@@ -3,10 +3,19 @@ import ChatForm from "./components/ChatForm";
 import GreenRiverIcon from "./components/GreenRiverIcon";
 import ChatMessage from "./components/ChatMessage";
 
+/**
+ * Main application component for the Advising Chatbot.
+ * Handles user interactions and displays chat history.
+ * @returns {JSX.Element} The rendered application component.
+ */
 const App = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const chatBodyRef = useRef();
 
+  /**
+   * Sends the latest user message to the server and updates chat history with the bot's response.
+   * @param {Array} history - The current chat history.
+   */
   const generateBotResponse = async (history) => {
     const lastMessage = history[history.length - 1];
   
@@ -28,8 +37,11 @@ const App = () => {
     }
   };  
 
+  /**
+   * Scrolls the chat window to the latest message whenever the chat history updates.
+   */
   useEffect(() => {
-    chatBodyRef.current.scrollTo({top:chatBodyRef.current.scrollHeight, behavior: "smooth"});
+    chatBodyRef.current.scrollTo({top: chatBodyRef.current.scrollHeight, behavior: "smooth"});
   }, [chatHistory]);
 
   return (
