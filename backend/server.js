@@ -3,15 +3,18 @@ import cors from "cors";
 import { translate } from "./nlpTranslator.js";
 import { scrapeData } from "./scraper.js";
 import { utterances } from "./db/nlpUtterances.js";
+import OpenAI from "openai/index.mjs";
+import { AI_API_KEY } from './connection.js';
 
 const app = express();
-const port = 5001;
+const port = 5002;
 
 app.use(cors());
 app.use(express.json());
 
 let nursingDataCache = null;
 let lastTopic = null;
+const apiKey = process.env.apiKey;
 
 /**
  * Fetches and refreshes the nursing data cache from the scraper.
@@ -155,10 +158,33 @@ app.post("/ask", async (req, res) => {
   let response = await translate(userQuestion);
   let answer = "";
 
+  const openai = new OpenAI({ apiKey: AI_API_KEY });
+
   if (response && nursingDataCache) {
     const { intent, content } = response;
     lastTopic = intent.split("agent.")[1];
     answer = summarizeContent(userQuestion, intent, content);
+    console.log(answer);
+      if (answer) {
+        try {
+            // Send answer to OpenAI to improve readability
+            const aiResponse = await openai.chat.completions.create({
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: `ONLY use the data provided to be a short 2-sentence answer the question: "${userQuestion}" Do not use any outside data.` },
+                    { role: "user", content: answer }
+                ]
+            });
+
+            answer = aiResponse.choices[0].message.content.trim();
+        } catch (error) {
+            console.error("OpenAI Error:", error);
+            answer = "I found an answer, but I couldn't enhance it right now.";
+        }
+        console.log(answer);
+    } else {
+        answer = "Sorry, I couldn't find an answer in the data.";
+    }
   } else if (nursingDataCache) {
     const lowerQuestion = userQuestion.toLowerCase();
     const keywords = lowerQuestion.split(" ").filter((word) => word.length > 2);
