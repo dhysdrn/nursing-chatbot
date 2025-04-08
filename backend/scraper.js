@@ -52,7 +52,6 @@ const fetchAndParsePage = async (url) => {
         const fullHeading = `${pageTitle} - ${headingText}`;
         nursingData[fullHeading] = content.trim();
       }
-      console.log(content);
     });
 
     return nursingData;
