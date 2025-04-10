@@ -148,6 +148,22 @@ const summarizeContent = (question, intent, content) => {
   return formattedContent;
 };
 
+const translateTags = (rawAnswer) => {
+  let rawArray = rawAnswer.split(/[\]\[]/);
+  let fixedAnswer = "";
+
+  for (let i = 0; i < rawArray.length; i++) {
+    //check if starts with https://
+    if (rawArray[i].startsWith("https://")) {
+        fixedAnswer = fixedAnswer + `<a href="${rawArray[i]}">${rawArray[i+2]}</a>\n\n\n`;
+        i+2;
+    } else {
+      fixedAnswer = fixedAnswer + rawArray[i];
+    }
+  }
+  return fixedAnswer;
+}
+
 /**
  * Handles incoming user questions and provides responses based on cached nursing data.
  */
@@ -164,24 +180,25 @@ app.post("/ask", async (req, res) => {
     const { intent, content } = response;
     lastTopic = intent.split("agent.")[1];
     answer = summarizeContent(userQuestion, intent, content);
-    console.log(answer);
+    answer = translateTags(answer);
+    //console.log(answer);
       if (answer) {
         try {
             // Send answer to OpenAI to improve readability
             const aiResponse = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
                 messages: [
-                    { role: "system", content: `ONLY use the data provided to be a short 2-sentence answer the question: "${userQuestion}" Do not use any outside data.` },
-                    { role: "user", content: answer }
+                  { role: "system", content: `ONLY use the data provided to be a short 2-sentence answer with <a> tags. The question is: "${userQuestion}" Do not use any outside data.` },
+                  { role: "user", content: answer }
                 ]
             });
 
             answer = aiResponse.choices[0].message.content.trim();
         } catch (error) {
             console.error("OpenAI Error:", error);
-            answer = "I found an answer, but I couldn't enhance it right now.";
+            answer = "Sorry, there was an error on my side! We'll fix this as soon as possible.";
         }
-        console.log(answer);
+        //console.log(answer);
     } else {
         answer = "Sorry, I couldn't find an answer in the data.";
     }
