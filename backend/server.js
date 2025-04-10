@@ -188,7 +188,7 @@ app.post("/ask", async (req, res) => {
             const aiResponse = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
                 messages: [
-                  { role: "system", content: `ONLY use the data provided to be a short 2-sentence answer with <a> tags. The question is: "${userQuestion}" Do not use any outside data.` },
+                  { role: "system", content: `ONLY use the data provided to be a short 2-sentence answer with the existing <a> tags. The question is: "${userQuestion}" Do not use any outside data.` },
                   { role: "user", content: answer }
                 ]
             });
