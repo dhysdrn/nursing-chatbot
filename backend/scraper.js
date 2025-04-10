@@ -27,7 +27,8 @@ const fetchAndParsePage = async (url) => {
             const href = $(a).attr("href");
             const text = $(a).text().trim();
             if (href) {
-              $(a).replaceWith(`[${text}](${href})`);
+              const absoluteHref = new URL(href, "https://www.greenriver.edu").href;
+              $(a).replaceWith(`[${absoluteHref}][${text}]`);
             }
           });
           return clone.text().trim();
