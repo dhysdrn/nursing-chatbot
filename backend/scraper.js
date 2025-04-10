@@ -21,29 +21,35 @@ const fetchAndParsePage = async (url) => {
       while (nextElement.length && !nextElement.is("h2, h3, h4")) {
         const tag = nextElement.prop("tagName").toLowerCase();
 
+
         const processLinks = (el) => {
           const clone = el.clone();
+
           clone.find("a").each((i, a) => {
-            const href = $(a).attr("href");
-            const text = $(a).text().trim();
+            const $a = $(a);
+            const href = $a.attr("href");
+            const text = $a.text().trim();
             if (href) {
               $(a).replaceWith(`[${text}](${href})`);
             }
           });
+          
           return clone.text().trim();
         };
+      
 
-        if (tag === "p") {
-          content += "\n" + processLinks(nextElement) + "\n";
-        } else if (tag === "ul" || tag === "ol") {
-          nextElement.find("li").each((j, li) => {
-            content += "- " + processLinks($(li)) + "\n";
-          });
-        } else if (tag === "div" || tag === "span") {
-          content += "\n" + processLinks(nextElement) + "\n";
-        } else {
-          content += processLinks(nextElement) + " ";
-        }
+       if (tag === "p") {
+        content += "\n" + processLinks(nextElement) + "\n";
+      } else if (tag === "ul" || tag === "ol") {
+        nextElement.find("li").each((j, li) => {
+          content += "- " + processLinks($(li)) + "\n";
+        });
+      } else if (tag === "div" || tag === "span") {
+        content += "\n" + processLinks(nextElement) + "\n";
+      } else {
+        content += processLinks(nextElement) + " ";
+      }
+
 
         nextElement = nextElement.next();
       }
@@ -100,6 +106,9 @@ export const scrapeData = async () => {
 
     const nursingData = { ...mainPageData };
     subPageData.forEach((pageData) => Object.assign(nursingData, pageData));
+
+    console.log(mainPageData)
+
 
     console.log(
       "✅ Available headings in nursingDataCache:",

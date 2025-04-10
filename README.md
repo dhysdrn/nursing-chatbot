@@ -30,14 +30,15 @@ This repository holds the code written by the team Thee AIdvisors (Noah Lanctot,
 1. Clone the project repository locally.
    `git clone https://github.com/InfiniteGmng/Thee-AIdvisors.git`
 2. Have the package manager `npm` installed ([npm](https://www.npmjs.com/)).
-3. Create a .env file in the frontend with this variable: {VITE_FETCH_URL="http://localhost:5001/ask"}.
-4. In the terminal/command line, navigate to the backend folder and install all backend dependencies with `npm install`.
-5. Within the same backend folder, run the project with `node server.js`.
-6. In the terminal/command line, navigate to the frontend folder and install all frontend dependencies with `npm install`.
-7. Within the same frontend folder, run the project with `npm run dev`.
-8. Once both the backend and frontend are running, you can access the full application by visiting the frontend URL
+3. Create a .env file in the frontend with this variable: {VITE_FETCH_URL="http://localhost:5002/ask"}.
+4. Create a .env file in the frontend with this variable using the OpenAI API key you generate: {AI_API_KEY=""}.
+5. In the terminal/command line, navigate to the backend folder and install all backend dependencies with `npm install`.
+6. Within the same backend folder, run the project with `node server.js`.
+7. In the terminal/command line, navigate to the frontend folder and install all frontend dependencies with `npm install`.
+8. Within the same frontend folder, run the project with `npm run dev`.
+9. Once both the backend and frontend are running, you can access the full application by visiting the frontend URL
 
-## Contributing to the Project
+## Contributing to the Project 
 
 1. Pull the Latest Changes  
 Before starting any work, ensure your local repository is up to date with the latest changes:
