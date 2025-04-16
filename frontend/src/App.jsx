@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import ChatForm from "./components/ChatForm";
 import GreenRiverIcon from "./components/GreenRiverIcon";
 import ChatMessage from "./components/ChatMessage";
+import ThemeToggle from "./components/ThemeToggle";
 
 /**
  * Main application component for the Advising Chatbot.
@@ -46,42 +47,29 @@ const App = () => {
   }, [chatHistory]);
 
   return (
-    <div>
-      <div className="container-left">
-        <h1>Welcome to the Advising Chatbot!</h1>
-        <br />
-        <p>
-          We are here to help with anything related to the <strong>nursing
-          program</strong> and <strong>advising</strong>. Feel free to ask
-          anything, and we will do our best to provide the answers you need:
-        </p>
-
-        <ul>
-          <li>
-            <strong>About the nursing program</strong> – If you have questions
-            about admissions, courses, or requirements, just ask!
-          </li>
-          <li>
-            <strong>Advising</strong> – Need help with course planning, schedules, or academic advice? We’ve got you covered.
-          </li>
-        </ul>
-      </div>
-      <div className="container-right">
-        <div className="chatbot-popup">
+      <div className="app-container">
+        <ThemeToggle/>
+        <div className="chat-container">
           {/* ChatBot Header */}
-          <div className="chat-header">
-            <div className="header-info">
+          <div className="header">
               <GreenRiverIcon />
-              <h2 className="logo-text">Advising Assistant</h2>
-            </div>
-            <button className="material-symbols-outlined">arrow_drop_down</button>
           </div>
-
           {/* ChatBot Body */}
           <div ref={chatBodyRef} className="chat-body">
+            <div className="message bot-message">
+              <strong>Welcome to the Green River Nursing Advising Chatbot!</strong> 
+              <br/>
+              We are here to help with anything related to the <strong>nursing program</strong> and <strong>advising</strong>. Feel free to ask questions — we’ll do our best to get you the info you need!
+              <ul>
+                <li><strong>About the Nursing Program:</strong> Have questions about <em>admissions, courses, or requirements</em>? Just ask!</li>
+                <li><strong>Advising:</strong> Need help with <em>course planning, schedules, or academic guidance</em>? We’ve got you covered.</li>
+              </ul>
+            </div>
+          
             {chatHistory.map((chat, index) => (
               <ChatMessage key={index} chat={chat} />
             ))}
+
           </div>
 
           {/* ChatBot Footer */}
@@ -92,8 +80,11 @@ const App = () => {
               generateBotResponse={generateBotResponse}
             />
           </div>
-        </div>
       </div>
+      
+      <footer className="footer">
+        &copy; {new Date().getFullYear()} Green River College Nursing Program
+      </footer>
     </div>
   );
 };
