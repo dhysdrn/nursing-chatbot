@@ -11,6 +11,9 @@
   --secondary-text: #196935;
   --muted-text: #6c757d;
   --gradient-color: linear-gradient(298deg,rgba(108, 180, 67, 1) 0%, rgba(44, 136, 43, 1) 100%);
+
+  --link-color: #0044cc;
+  --link-hover-color: #66aaff;
 }
 
 .dark {
@@ -26,6 +29,9 @@
   --secondary-text: #a7d7a8;
   --muted-text: #a0a0a0;
   --gradient-color: linear-gradient(298deg,rgba(0, 98, 37, 1) 0%, rgba(0, 48, 19, 1) 100%);
+
+  --link-color: #66aaff;
+  --link-hover-color: #99ccff;
 }
 
 body {
@@ -211,4 +217,14 @@ body {
     padding: 10px 0px;
 
   }
+}
+
+
+.custom-link {
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+.custom-link:hover {
+  color: var(--link-hover-color);
 }
