@@ -155,7 +155,7 @@ const translateTags = (rawAnswer) => {
   for (let i = 0; i < rawArray.length; i++) {
     //check if starts with https://
     if (rawArray[i].startsWith("https://")) {
-        fixedAnswer = fixedAnswer + `<a href="${rawArray[i]}">${rawArray[i+2]}</a>\n\n\n`;
+        fixedAnswer = fixedAnswer + `<a href="${rawArray[i]}" class="custom-link" target="_blank" rel="noopener noreferrer">${rawArray[i+2]}</a>\n\n\n`;
         i+2;
     } else {
       fixedAnswer = fixedAnswer + rawArray[i];
