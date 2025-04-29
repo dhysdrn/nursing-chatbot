@@ -12,14 +12,18 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@datastax/astra-db-ts": "^1.5.0",
+    "@langchain/community": "^0.3.41",
     "@nlpjs/core": "^5.0.0-alpha.5",
     "@nlpjs/lang-en-min": "^5.0.0-alpha.5",
     "@nlpjs/nlp": "^5.0.0-alpha.5",
     "axios": "^1.8.1",
     "cheerio": "^1.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "express": "^4.21.2",
-    "openai": "^4.89.0"
+    "langchain": "^0.3.24",
+    "openai": "^4.96.0",
+    "puppeteer": "^24.7.2"
   }
 }
