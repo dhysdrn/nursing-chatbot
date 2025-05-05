@@ -12,11 +12,11 @@ const {
     ASTRA_DB_COLLECTION, 
     ASTRA_DB_API_ENDPOINT, 
     ASTRA_DB_APPLICATION_TOKEN, 
-    OPENAI_API_KEY 
+    AI_API_KEY 
 } = process.env;
 
 // OpenAI instance
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: AI_API_KEY });
 
 // URLs to scrape
 const nursingData = [
