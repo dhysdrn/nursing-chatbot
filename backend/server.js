@@ -99,7 +99,14 @@ const rag = async (userQuestion) => {
   return aiResponse;
 }
 
-const removeSpaces = (answer) => {
+
+/**
+ * Removes the filler information the AI gives us.
+ * 
+ * @param {string} answer 
+ * @returns 
+ */
+const removeFiller = (answer) => {
   return answer.substring(7, answer.length-4)
 }
 
@@ -115,7 +122,7 @@ app.post("/ask", async (req, res) => {
   //send the question off to OpenAI using pre-exisiting knowledge
   answer = await rag(userQuestion);
   //Filters out the ```html at the start and the end
-  answer = removeSpaces(answer);
+  answer = removeFiller(answer);
 
   console.log(`Response: "${answer}..."`);
   res.json({ response: answer });
