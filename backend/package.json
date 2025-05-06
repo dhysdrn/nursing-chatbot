@@ -17,6 +17,7 @@
     "@nlpjs/core": "^5.0.0-alpha.5",
     "@nlpjs/lang-en-min": "^5.0.0-alpha.5",
     "@nlpjs/nlp": "^5.0.0-alpha.5",
+    "ai": "^4.3.13",
     "axios": "^1.8.1",
     "cheerio": "^1.0.0",
     "cors": "^2.8.5",
