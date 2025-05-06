@@ -220,11 +220,11 @@ body {
 }
 
 
-.custom-link {
+a {
   color: var(--link-color);
   text-decoration: underline;
 }
 
-.custom-link:hover {
+a:hover {
   color: var(--link-hover-color);
 }
