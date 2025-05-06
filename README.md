@@ -28,7 +28,7 @@ This repository holds the code written by the team Thee AIdvisors (Noah Lanctot,
 ## Local Development Environment Setup
 
 1. Clone the project repository locally.
-   `git clone https://github.com/InfiniteGmng/Thee-AIdvisors.git`
+   `git clone https://github.com/dhysdrn/nursing-chatbot.git`
 2. Have the package manager `npm` installed ([npm](https://www.npmjs.com/)).
 3. Create a .env file in the frontend with this variable: {VITE_FETCH_URL="http://localhost:5002/ask"}.
 4. Create a .env file in the frontend with this variable using the OpenAI API key you generate: {AI_API_KEY=""}.
