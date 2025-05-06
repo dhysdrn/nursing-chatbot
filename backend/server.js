@@ -68,7 +68,7 @@ const rag = async (userQuestion) => {
     The context will provide you with the most recent data from the Nursing websites.
     If the context doesn't include the information you need, do not answer the question based on existing knowledge and tell the user that you cannot answer the question and that they should email nursing@greenriver.edu .
     Format responses using markdown where applicable and don't return images.
-    Give a response as an HTML format. If links are provided, make sure they go into a new tab.
+    Give a response as an HTML format. Try not to add titles. If links are provided, make sure they go into a new tab.
     --------------------
     START CONTEXT
     ${docContext}
@@ -99,6 +99,10 @@ const rag = async (userQuestion) => {
   return aiResponse;
 }
 
+const removeSpaces = (answer) => {
+  return answer.substring(7, answer.length-4)
+}
+
 /**
  * Handles incoming user questions and provides responses based on cached nursing data.
  */
@@ -110,8 +114,8 @@ app.post("/ask", async (req, res) => {
   let answer = "";
   //send the question off to OpenAI using pre-exisiting knowledge
   answer = await rag(userQuestion);
-
-  //TODO: Some filter should be here to remove the ```html at the start
+  //Filters out the ```html at the start and the end
+  answer = removeSpaces(answer);
 
   console.log(`Response: "${answer}..."`);
   res.json({ response: answer });
