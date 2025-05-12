@@ -4,6 +4,7 @@ import OpenAI from "openai/index.mjs";
 //import { streamText, StreamingTextResponse } from "ai";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
+import { addData } from './addData.js';
 
 const app = express();
 const port = 5002;
@@ -126,6 +127,40 @@ app.post("/ask", async (req, res) => {
 
   console.log(`Response: "${answer}..."`);
   res.json({ response: answer });
+});
+
+/**
+ * Endpoint to fetch documents from Astra DB for the frontend to display in a table
+ */
+app.get("/documents", async (req, res) => {
+  try {
+    const collection = await db.collection('admindata');
+    const cursor = collection.find({}, { limit: 10 });
+
+    const documents = await cursor.toArray();
+    const docsMap = documents.map(doc => ({ heading: doc.heading, text: doc.text }));
+
+    res.json(docsMap);
+  } catch (err) {
+    console.error("Error querying DB:", err);
+    res.status(500).json({ error: "Failed to fetch data from Astra DB" });
+  }
+});
+
+// POST endpoint to add admin data
+app.post("/admin-data", async (req, res) => {
+  const { heading, content } = req.body;
+
+  if (!heading || !content) {
+    return res.status(400).json({ message: "Both heading and content are required." });
+  }
+  try {
+    await addData(heading, content);
+    return res.json({ message: "Data added successfully!" });
+  } catch (error) {
+    console.error("Error adding data:", error);
+    return res.status(500).json({ message: "Error adding data. Please try again later." });
+  }
 });
 
 /**
