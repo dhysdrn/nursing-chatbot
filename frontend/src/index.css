@@ -60,6 +60,11 @@ body {
   background: var(--gradient-color);
 }
 
+.admin-page {
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+}
 
 .chat-container {
   max-width: 1000px;
