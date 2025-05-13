@@ -1,65 +1,92 @@
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState, useRef } from "react";
+import ChatForm from "../components/ChatForm";
+import GreenRiverIcon from "../components/GreenRiverIcon";
+import ChatMessage from "../components/ChatMessage";
+import ThemeToggle from "../components/ThemeToggle";
 
-const DataForm = () => {
-  const [heading, setHeading] = useState("");
-  const [text, setText] = useState("");
-  const [responseMessage, setResponseMessage] = useState("");
+/**
+ * Main application component for the Advising Chatbot.
+ * Handles user interactions and displays chat history.
+ * @returns {JSX.Element} The rendered application component.
+ */
+const ChatbotPage = () => {
+  const [chatHistory, setChatHistory] = useState([]);
+  const chatBodyRef = useRef();
+  const fetchURL = import.meta.env.VITE_FETCH_URL;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!heading || !text) {
-      setResponseMessage("Please provide both heading and text.");
-      return;
-    }
-
+  /**
+   * Sends the latest user message to the server and updates chat history with the bot's response.
+   * @param {Array} history - The current chat history.
+   */
+  const generateBotResponse = async (history) => {
+    const lastMessage = history[history.length - 1];
+  
     try {
-      // Update the URL to '/admin-data'
-      const response = await axios.post("http://localhost:5002/admin-data", {
-        heading,
-        content: text,
+      const response = await fetch(fetchURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: lastMessage.text }),
       });
-
-      setResponseMessage(response.data.message); // Display the message returned from the backend
+  
+      const data = await response.json();
+  
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        { role: "model", text: data.response },
+      ]);
     } catch (error) {
-      console.error("Error posting data:", error);
-      setResponseMessage("Error adding data. Please try again.");
+      console.error("Error fetching bot response:", error);
     }
-  };
+  };  
+
+  /**
+   * Scrolls the chat window to the latest message whenever the chat history updates.
+   */
+  useEffect(() => {
+    chatBodyRef.current.scrollTo({top: chatBodyRef.current.scrollHeight, behavior: "smooth"});
+  }, [chatHistory]);
 
   return (
-    <div style={{ padding: "1rem", maxWidth: "600px", margin: "0 auto" }}>
-      <h2>Add Data</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="heading">Heading:</label>
-          <input
-            id="heading"
-            type="text"
-            value={heading}
-            onChange={(e) => setHeading(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="text">Text:</label>
-          <textarea
-            id="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
-            rows={6}
-            required
-          />
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+      <div className="app-container">
+        <ThemeToggle/>
+        <div className="chat-container">
+          {/* ChatBot Header */}
+          <div className="header">
+              <GreenRiverIcon />
+          </div>
+          {/* ChatBot Body */}
+          <div ref={chatBodyRef} className="chat-body">
+            <div className="message bot-message">
+              <strong>Welcome to the Green River Nursing Advising Chatbot!</strong> 
+              <br/>
+              We are here to help with anything related to the <strong>nursing program</strong> and <strong>advising</strong>. Feel free to ask questions — we’ll do our best to get you the info you need!
+              <ul>
+                <li><strong>About the Nursing Program:</strong> Have questions about <em>admissions, courses, or requirements</em>? Just ask!</li>
+                <li><strong>Advising:</strong> Need help with <em>course planning, schedules, or academic guidance</em>? We’ve got you covered.</li>
+              </ul>
+            </div>
+          
+            {chatHistory.map((chat, index) => (
+              <ChatMessage key={index} chat={chat} />
+            ))}
 
-      {responseMessage && <p style={{ marginTop: "1rem" }}>{responseMessage}</p>}
+          </div>
+
+          {/* ChatBot Footer */}
+          <div className="chat-footer">
+            <ChatForm
+              chatHistory={chatHistory}
+              setChatHistory={setChatHistory}
+              generateBotResponse={generateBotResponse}
+            />
+          </div>
+      </div>
+      
+      <footer className="footer">
+        &copy; {new Date().getFullYear()} Green River College Nursing Program
+      </footer>
     </div>
   );
 };
 
-export default DataForm;
+export default ChatbotPage;
