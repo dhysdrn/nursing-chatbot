@@ -5,6 +5,10 @@ import OpenAI from "openai/index.mjs";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
 import { addData } from './addData.js';
+import cron from 'node-cron';
+import { loadSampleData, createCollection } from './loadDb.js';
+
+
 
 const app = express();
 const port = 5002;
@@ -134,7 +138,7 @@ app.post("/ask", async (req, res) => {
  */
 app.get("/documents", async (req, res) => {
   try {
-    const collection = await db.collection('admindata');
+    const collection = await db.collection(ASTRA_DB_COLLECTION);
     const cursor = collection.find({}, { limit: 10 });
 
     const documents = await cursor.toArray();
@@ -160,6 +164,29 @@ app.post("/admin-data", async (req, res) => {
   } catch (error) {
     console.error("Error adding data:", error);
     return res.status(500).json({ message: "Error adding data. Please try again later." });
+  }
+});
+
+app.post("/reload-data", async (req, res) => {
+  try {
+    await createCollection();
+    await loadSampleData({ wipe: true });
+    res.json({ message: "Data reloaded successfully." });
+  } catch (err) {
+    console.error("Failed to reload data:", err);
+    res.status(500).json({ message: "Failed to reload data." });
+  }
+});
+
+// Every day at 2 AM
+cron.schedule('0 2 * * *', async () => {
+  console.log("Scheduled data reload started...");
+  try {
+    await createCollection();
+    await loadSampleData({ wipe: true }); 
+    console.log("Scheduled data reload complete.");
+  } catch (err) {
+    console.error("Scheduled reload failed:", err);
   }
 });
 

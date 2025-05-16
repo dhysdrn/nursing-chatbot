@@ -17,26 +17,26 @@ const openai = new OpenAI({ apiKey: AI_API_KEY });
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
 const db = client.db(ASTRA_DB_API_ENDPOINT, { namespace: ASTRA_DB_NAMESPACE });
 
-// Function to create the "admindata" collection if it doesn't exist
-const createAdminDataCollection = async () => {
-  try {
-    // Check if the collection exists
-    const collections = await db.listCollections();
-    if (!collections.includes("admindata")) {
-      const res = await db.createCollection("admindata", {
-        vector: {
-          dimension: 1536,
-          metric: "dot_product",
-        },
-      });
-      console.log("Admin data collection created:", res);
-    } else {
-      console.log("Collection 'admindata' already exists.");
-    }
-  } catch (error) {
-    console.error("Error creating admin data collection:", error);
-  }
-};
+// // Function to create the "admindata" collection if it doesn't exist
+// const createAdminDataCollection = async () => {
+//   try {
+//     // Check if the collection exists
+//     const collections = await db.listCollections();
+//     if (!collections.includes("admindata")) {
+//       const res = await db.createCollection("admindata", {
+//         vector: {
+//           dimension: 1536,
+//           metric: "dot_product",
+//         },
+//       });
+//       console.log("Admin data collection created:", res);
+//     } else {
+//       console.log("Collection 'admindata' already exists.");
+//     }
+//   } catch (error) {
+//     console.error("Error creating admin data collection:", error);
+//   }
+// };
 
 // Function to add admin data into the "admindata" collection
 const addData = async (heading, content) => {
@@ -64,7 +64,7 @@ const addData = async (heading, content) => {
   }
 };
 
-// Ensure the "admindata" collection exists
-createAdminDataCollection();
+// // Ensure the "admindata" collection exists
+// createAdminDataCollection();
 
 export { addData };

@@ -1,29 +1,20 @@
 import { DataAPIClient } from "@datastax/astra-db-ts";
-// import { PuppeteerWebBaseLoader } from "@langchain/community/document_loaders/web/puppeteer";
 import OpenAI from "openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import "dotenv/config";
 import { scrapeData } from "./scraper.js";
 
-
 // ENV variables
 const {
-    ASTRA_DB_NAMESPACE, 
-    ASTRA_DB_COLLECTION, 
-    ASTRA_DB_API_ENDPOINT, 
-    ASTRA_DB_APPLICATION_TOKEN, 
-    AI_API_KEY 
+  ASTRA_DB_NAMESPACE,
+  ASTRA_DB_COLLECTION,
+  ASTRA_DB_API_ENDPOINT,
+  ASTRA_DB_APPLICATION_TOKEN,
+  AI_API_KEY,
 } = process.env;
 
 // OpenAI instance
 const openai = new OpenAI({ apiKey: AI_API_KEY });
-
-// URLs to scrape
-const nursingData = [
-    'https://www.greenriver.edu/students/academics/degrees-programs/nursing/index.html',
-    'https://www.greenriver.edu/students/academics/degrees-programs/nursing/bsn/bsnfaqs.html',
-    'https://www.greenriver.edu/students/academics/degrees-programs/nursing/practical-nursing/application/faqs.html'
-];
 
 // Astra DB setup
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
@@ -31,70 +22,80 @@ const db = client.db(ASTRA_DB_API_ENDPOINT, { namespace: ASTRA_DB_NAMESPACE });
 
 // Text splitter config
 const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 512,
-    chunkOverlap: 100
+  chunkSize: 512,
+  chunkOverlap: 100,
 });
 
-// Create collection with vector support
+// ✅ Exported function to create the collection
 const createCollection = async (similarityMetric = "dot_product") => {
-    const res = await db.createCollection(ASTRA_DB_COLLECTION, {
-        vector: {
-            dimension: 1536,
-            metric: similarityMetric
-        }
+  const collections = await db.listCollections();
+  const exists = collections.find((c) => c.name === ASTRA_DB_COLLECTION);
+  if (!exists) {
+    await db.createCollection(ASTRA_DB_COLLECTION, {
+      vector: {
+        dimension: 1536,
+        metric: similarityMetric,
+      },
     });
-    console.log("Collection created:", res);
+    console.log("✅ Collection created.");
+  } else {
+    console.log("ℹ️ Collection already exists.");
+  }
 };
 
-// Scrape and load data into DB
-const loadSampleData = async () => {
-    const collection = await db.collection(ASTRA_DB_COLLECTION);
-    const { nursingData } = await scrapeData();
+// ✅ Exported function to load data
+const loadSampleData = async ({ wipe = false } = {}) => {
+  const collection = await db.collection(ASTRA_DB_COLLECTION);
 
-    for (const [heading, content] of Object.entries(nursingData)) {
-        const chunks = await splitter.splitText(content);
+  if (wipe) {
+    await collection.deleteMany({});
+    console.log("🧹 Collection wiped.");
+  }
 
-        for (const chunk of chunks) {
-            const embedding = await openai.embeddings.create({
-                model: "text-embedding-3-small",
-                input: chunk,
-                encoding_format: "float"
-            });
+  const scraped = await scrapeData(); // { heading: { text, url } }
+  const data = scraped?.nursingData ?? scraped;
+  const timestamp = new Date().toISOString();
 
-            const vector = embedding.data[0].embedding;
+  for (const [heading, value] of Object.entries(data)) {
+    const text = typeof value === "string" ? value : value.text;
+    const url = typeof value === "string" ? null : value.url;
 
-            const res = await collection.insertOne({
-                $vector: vector,
-                heading,
-                text: chunk,
-                heading
-            });
-
-            console.log("Inserted chunk for heading:", heading);
-        }
+    if (!text || typeof text !== "string" || !text.trim()) {
+      console.warn(`⚠️ Skipping invalid entry: ${heading}`);
+      continue;
     }
+
+    const chunks = await splitter.splitText(text);
+
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+
+      const embedding = await openai.embeddings.create({
+        model: "text-embedding-3-small",
+        input: chunk,
+        encoding_format: "float",
+      });
+
+      const vector = embedding.data[0].embedding;
+      const docId = `${heading}_${i}`.replace(/\s+/g, "_");
+
+      await collection.insertOne({
+        _id: docId,
+        $vector: vector,
+        heading,
+        text: chunk,
+        url,
+        timestamp,
+      });
+
+      console.log(`🧩 Inserted chunk #${i} for "${heading}"`);
+    }
+  }
+
+  console.log("✅ Data load complete.");
 };
 
+// ❌ No automatic execution here anymore!
 
-// // Scraper
-// const scrapePage = async (url) => {
-//     const loader = new PuppeteerWebBaseLoader(url, {
-//         launchOptions: {
-//             headless: true
-//         },
-//         gotoOptions: {
-//             waitUntil: "domcontentloaded"
-//         },
-//         evaluate: async (page, browser) => {
-//             const result = await page.evaluate(() => document.body.innerHTML);
-//             await browser.close();
-//             return result;
-//         }
-//     });
-
-//     const html = await loader.scrape();
-//     return html?.replace(/<[^>]*>?/gm, '');
-// };
-
-// Start everything
-createCollection().then(() => loadSampleData()).catch(console.error);
+// ✅ Only exports
+export { createCollection, loadSampleData };
