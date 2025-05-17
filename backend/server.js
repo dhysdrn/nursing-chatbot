@@ -49,7 +49,7 @@ const rag = async (userQuestion) => {
       sort: {
         $vector: embedding.data[0].embedding,
       },
-      limit: 10
+      limit: 50
     });
 
     const documents = await cursor.toArray();
@@ -71,7 +71,8 @@ const rag = async (userQuestion) => {
     content: `You are an AI assistant who knows everything about Green River College Nursing.
     Use the below context to augment what you know about Green River College Nursing.
     The context will provide you with the most recent data from the Nursing websites.
-    If the context doesn't include the information you need, do not answer the question based on existing knowledge and tell the user that you cannot answer the question and that they should email nursing@greenriver.edu .
+    If the context doesn't include the information you need, do not answer the question based on existing knowledge and tell the user that you cannot answer the question and give example questions that relate to the user's question in the form of a question they could ask.
+    If no answer to the question they asked, suggest that they should email nursing@greenriver.edu .
     Format responses using markdown where applicable and don't return images.
     Give a response as an HTML format. Try not to add titles. If links are provided, make sure they go into a new tab.
     --------------------
