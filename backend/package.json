@@ -28,6 +28,7 @@
     "langchain": "^0.3.24",
     "node-cron": "^4.0.5",
     "openai": "^4.96.0",
+    "p-limit": "^6.2.0",
     "pdf-parse": "^1.1.1",
     "puppeteer": "^24.7.2"
   }
