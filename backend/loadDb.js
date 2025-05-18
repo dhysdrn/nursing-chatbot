@@ -27,15 +27,27 @@ const splitter = new RecursiveCharacterTextSplitter({
   chunkOverlap: 100,
 });
 
-// ✅ Exported function to create the collection
-const createCollection = async (similarityMetric = "dot_product") => {
-  const collections = await db.listCollections();
-  const exists = collections.find((c) => c.name === ASTRA_DB_COLLECTION);
+// ✅ Exported function to create a user collection
+const createUserCollection = async (collectionName) => {
+    const collections = await db.listCollections();
+    const exists = collections.find((c) => c.name === collectionName);
   if (!exists) {
-    await db.createCollection(ASTRA_DB_COLLECTION, {
+    await db.createCollection(collectionName);
+    console.log("✅ User Collection created.");
+  } else {
+    console.log("ℹ️ User Collection already exists.");
+  }
+}
+
+// ✅ Exported function to create the collection
+const createCollection = async (collectionName) => {
+  const collections = await db.listCollections();
+  const exists = collections.find((c) => c.name === collectionName);
+  if (!exists) {
+    await db.createCollection(collectionName, {
       vector: {
         dimension: 1536,
-        metric: similarityMetric,
+        metric: "dot_product",
       },
     });
     console.log("✅ Collection created.");
@@ -122,4 +134,4 @@ const loadSampleData = async ({ wipe = false } = {}) => {
 // ❌ No automatic execution here anymore!
 
 // ✅ Only exports
-export { createCollection, loadSampleData };
+export { createCollection, createUserCollection, loadSampleData };
