@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import "dotenv/config";
 import { scrapeData } from "./scraper.js";
+import pLimit from "p-limit";
 
 // ENV variables
 const {
@@ -56,6 +57,11 @@ const loadSampleData = async ({ wipe = false } = {}) => {
   const data = scraped?.nursingData ?? scraped;
   const timestamp = new Date().toISOString();
 
+  const limit = pLimit(5); // ⬅️ Limit to 5 concurrent embedding requests
+
+  let headingCount = 0;
+  const totalHeadings = Object.keys(data).length;
+
   for (const [heading, value] of Object.entries(data)) {
     const text = typeof value === "string" ? value : value.text;
     const url = typeof value === "string" ? null : value.url;
@@ -67,33 +73,51 @@ const loadSampleData = async ({ wipe = false } = {}) => {
 
     const chunks = await splitter.splitText(text);
 
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
+    // TODO: this if statement skips over the pdfs with too many chunks. Always: "PDF: 2025-2026 Nursing Student Handbook". Delete this statement when the PDF problem is fixed
+    if (chunks.length > 100) {
+      console.warn(`⚠️ "${heading}" has ${chunks.length} chunks. Skipping for now.`);
+      continue;
+    }
 
-      const embedding = await openai.embeddings.create({
-        model: "text-embedding-3-small",
-        input: chunk,
-        encoding_format: "float",
-      });
+    // Build embedding tasks with concurrency limit
+    const embeddingTasks = chunks.map(chunk =>
+      limit(async () => {
+        const embedding = await openai.embeddings.create({
+          model: "text-embedding-3-small",
+          input: chunk,
+          encoding_format: "float",
+        });
+        return {
+          chunk,
+          vector: embedding.data[0].embedding,
+        };
+      })
+    );
 
-      const vector = embedding.data[0].embedding;
-      const docId = `${heading}_${i}`.replace(/\s+/g, "_");
 
-      await collection.insertOne({
-        _id: docId,
-        $vector: vector,
-        heading,
-        text: chunk,
-        url,
-        timestamp,
-      });
+    // Wait for embeddings to finish
+    const embeddedChunks = await Promise.all(embeddingTasks);
 
-      console.log(`🧩 Inserted chunk #${i} for "${heading}"`);
+    // Build documents for bulk insert
+    const documents = embeddedChunks.map((item, i) => ({
+      _id: `${heading}_${i}`.replace(/\s+/g, "_"),
+      $vector: item.vector,
+      heading,
+      text: item.chunk,
+      url,
+      timestamp,
+    }));
+
+    if (documents.length > 0) {
+      await collection.insertMany(documents);
+      headingCount++;
+      console.log(`📦 [${headingCount}/${totalHeadings}] Inserted ${documents.length} chunks for "${heading}" from ${url}`);
     }
   }
 
   console.log("✅ Data load complete.");
 };
+
 
 // ❌ No automatic execution here anymore!
 
