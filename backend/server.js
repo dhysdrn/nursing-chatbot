@@ -3,7 +3,7 @@ import cors from "cors";
 import OpenAI from "openai/index.mjs";
 //import { streamText, StreamingTextResponse } from "ai";
 import { DataAPIClient } from "@datastax/astra-db-ts";
-import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
+import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION,ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
 import { addData } from './addData.js';
 import cron from 'node-cron';
 import { loadSampleData, createCollection } from './loadDb.js';
@@ -44,7 +44,7 @@ const rag = async (userQuestion) => {
   
   //Check DB connection
   try {
-    const collection = await db.collection(ASTRA_DB_COLLECTION);
+    const collection = db.collection(ASTRA_DB_COLLECTION);
     const cursor = collection.find(null, {
       sort: {
         $vector: embedding.data[0].embedding,
@@ -52,17 +52,31 @@ const rag = async (userQuestion) => {
       limit: 50
     });
 
+    //check admin DB 
+    const admin_collection = db.collection(ASTRA_DB_COLLECTION_ADMIN);
+    const admin_cursor = admin_collection.find(null, {
+      sort: {
+        $vector: embedding.data[0].embedding,
+      },
+      limit: 10
+    });
+
+    //transfer them to an array
     const documents = await cursor.toArray();
+    const admin_documents = await admin_cursor.toArray();
+    
+    //combine the two information from the collections
+    const combined_documents = documents.concat(admin_documents);
 
     //if there was a response, add it to docsMap
-    const docsMap = documents?.map(doc => doc.text);
+    const docsMap = combined_documents?.map(doc => doc.text);
 
     docContext = JSON.stringify(docsMap);
     //console.log(`${docContext}`);
 
   } catch (err) {
-    //No Response from DB
-    console.log(`Error querying db... ${err}`)
+    //No Response from a DB
+    console.log(`Error querying a db... ${err}`)
     docContext = "";
   }
 
