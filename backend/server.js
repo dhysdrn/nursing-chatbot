@@ -3,7 +3,7 @@ import cors from "cors";
 import OpenAI from "openai/index.mjs";
 //import { streamText, StreamingTextResponse } from "ai";
 import { DataAPIClient } from "@datastax/astra-db-ts";
-import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION,ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
+import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
 import { addData } from './addData.js';
 import cron from 'node-cron';
 import { loadSampleData, createCollection } from './loadDb.js';
@@ -184,7 +184,7 @@ app.post("/admin-data", async (req, res) => {
 
 app.post("/reload-data", async (req, res) => {
   try {
-    await createCollection();
+    await createCollection(ASTRA_DB_COLLECTION);
     await loadSampleData({ wipe: true });
     res.json({ message: "Data reloaded successfully." });
   } catch (err) {
@@ -197,7 +197,7 @@ app.post("/reload-data", async (req, res) => {
 cron.schedule('0 2 * * *', async () => {
   console.log("Scheduled data reload started...");
   try {
-    await createCollection();
+    await createCollection(ASTRA_DB_COLLECTION);
     await loadSampleData({ wipe: true }); 
     console.log("Scheduled data reload complete.");
   } catch (err) {
