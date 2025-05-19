@@ -4,7 +4,7 @@ import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import cliProgress from "cli-progress";
+import cliProgress from "cli-progress"; 
 
 // Resolve __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
