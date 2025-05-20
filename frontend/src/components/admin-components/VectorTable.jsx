@@ -11,13 +11,13 @@ const VectorTable = () => {
   const [editText, setEditText] = useState("");
 
   const fetchURL = useMemo(() => {
-    return `${import.meta.env.VITE_FETCH_URL}/documents`;
+    return `${import.meta.env.VITE_FETCH_URL}`;
   }, []);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(fetchURL);
+      const response = await axios.get(`${fetchURL}/documents`);
       setData(response.data || []);
       setError(null);
     } catch (err) {
@@ -37,7 +37,7 @@ const VectorTable = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:5002/admin-data/${id}`);
+      await axios.delete(`${fetchURL}/admin-data/${id}`);
       fetchData();
     } catch (err) {
       console.error("Delete error:", err);
@@ -64,7 +64,7 @@ const VectorTable = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5002/admin-data/${editingId}`, {
+      await axios.put(`${fetchURL}/admin-data/${editingId}`, {
         heading: editHeading,
         content: editText,
       });

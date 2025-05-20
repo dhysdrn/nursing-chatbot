@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import axios from "axios";
@@ -7,10 +7,15 @@ const TimeStamp = () => {
   const [lastScraped, setLastScraped] = useState(null);
   const [error, setError] = useState(null);
 
+
+   const fetchURL = useMemo(() => {
+      return `${import.meta.env.VITE_FETCH_URL}/last-scraped`;
+    }, []);
+
   useEffect(() => {
     const fetchLastScraped = async () => {
       try {
-        const res = await axios.get("http://localhost:5002/last-scraped");
+        const res = await axios.get(fetchURL);
         setLastScraped(res.data.lastScraped);
       } catch (err) {
         console.error("Failed to fetch last scraped timestamp:", err);
@@ -19,7 +24,7 @@ const TimeStamp = () => {
     };
 
     fetchLastScraped();
-  }, []);
+  }, [fetchURL]);
 
   dayjs.extend(relativeTime);
   return (
