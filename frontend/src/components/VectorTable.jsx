@@ -6,11 +6,14 @@ const VectorTable = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  let fetchURL = import.meta.env.VITE_FETCH_URL;
+  fetchURL = fetchURL + "/documents";
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:5002/documents");
+        const response = await axios.get(fetchURL);
         setData(response.data);
       } catch (err) {
         console.error("Error fetching from server:", err);
