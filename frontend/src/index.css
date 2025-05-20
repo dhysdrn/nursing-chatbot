@@ -274,3 +274,184 @@ a:hover {
     transform: translateX(100%);
   }
 }
+
+.navbar-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.navbar-sidebar {
+  width: 200px;
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-right: 1px solid #ccc;
+}
+
+.navbar-title {
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
+.navbar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: normal;
+}
+
+.navbar-link-active {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.navbar-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+.data-form-container {
+  padding: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.data-form-info {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.data-form-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.data-form-input,
+.data-form-textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.data-form-textarea {
+  resize: vertical;
+}
+
+.char-count {
+  text-align: right;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.char-count.invalid {
+  color: red;
+}
+
+.char-count.valid {
+  color: green;
+}
+
+.data-form-button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.data-form-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.data-form-button.enabled {
+  background-color: #007bff;
+}
+
+.error-message {
+  color: red;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.success-message {
+  color: green;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+.vector-table {
+  padding: 1rem;
+}
+
+.vector-table h2 {
+  margin-bottom: 1rem;
+}
+
+.vector-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.vector-table th,
+.vector-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  vertical-align: top;
+}
+
+.vector-table td {
+  border-color: #ddd;
+}
+
+.vector-table td.actions {
+  white-space: nowrap;
+}
+
+.vector-table button {
+  margin-right: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.vector-table button:last-child {
+  margin-right: 0;
+}
+
+.vector-table input[type="text"],
+.vector-table textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.navbar-title-link {
+  text-decoration: none;
+  color: inherit; /* keep h2 color */
+  cursor: pointer;
+  display: inline-block;
+}
+
+.navbar-title-link:hover {
+  text-decoration: underline;
+}

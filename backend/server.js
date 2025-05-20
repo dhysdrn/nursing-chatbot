@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import OpenAI from "openai/index.mjs";
-//import { streamText, StreamingTextResponse } from "ai";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
 import { addData, addUser } from './addData.js';
@@ -10,8 +9,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cron from 'node-cron';
 import { loadSampleData, createCollection } from './loadDb.js';
-
-
+import rateLimit from "express-rate-limit";
 
 const app = express();
 const port = 5002;
@@ -133,6 +131,18 @@ const removeFiller = (answer) => {
   return answer.substring(7, answer.length-4)
 }
 
+// Rate limiting, max 10 requests per IP in 15 minutes
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many submissions from this IP, please try again later.",
+    });
+  },
+});
+
+
 /**
  * Handles incoming user questions and provides responses based on cached nursing data.
  */
@@ -156,11 +166,11 @@ app.post("/ask", async (req, res) => {
  */
 app.get("/documents", async (req, res) => {
   try {
-    const collection = await db.collection(ASTRA_DB_COLLECTION);
+    const collection = await db.collection(ASTRA_DB_COLLECTION_ADMIN);
     const cursor = collection.find({}, { limit: 10 });
 
     const documents = await cursor.toArray();
-    const docsMap = documents.map(doc => ({ heading: doc.heading, text: doc.text }));
+    const docsMap = documents.map(doc => ({  _id: doc._id, heading: doc.heading, text: doc.text }));
 
     res.json(docsMap);
   } catch (err) {
@@ -169,19 +179,137 @@ app.get("/documents", async (req, res) => {
   }
 });
 
-// POST endpoint to add admin data
-app.post("/admin-data", async (req, res) => {
+const sanitizeInput = (str) => {
+  return str
+    .replace(/<script.*?>.*?<\/script>/gi, "") // remove script tags
+    .replace(/<\/?[^>]+(>|$)/g, "") // remove other HTML tags
+    .replace(/https?:\/\/[^\s]+/g, "") // strip URLs
+    .trim();
+};
+const hasTooManySpecialChars = (text) => {
+  // This checks if more than 30% of the content is symbols like $%^&*#@!
+  const symbols = text.match(/[^a-zA-Z0-9\s]/g);
+  return symbols && symbols.length / text.length > 0.2;
+};
+
+const MAX_LENGTH = 1500;
+
+app.post("/admin-data", limiter, async (req, res) => {
+  let { heading, content } = req.body;
+
+  if (!heading || !content) {
+    return res.status(400).json({ message: "Both heading and content are required." });
+  }
+
+  // Check special chars ratio only if content is long enough to avoid false positives
+  if (content.length > 10 && hasTooManySpecialChars(content)) {
+    return res.status(400).json({ message: "Content contains excessive special characters or symbols." });
+  }
+
+  // Sanitize inputs
+  heading = sanitizeInput(heading);
+  content = sanitizeInput(content);
+
+  // Check length in bytes
+  if (Buffer.byteLength(content, 'utf8') > MAX_LENGTH) {
+    return res.status(400).json({
+      message: `Your content is too long. Please shorten it to fit under the limit.`,
+    });
+  }
+
+  try {
+  await addData(heading, content);
+  return res.json({ message: "Data added successfully!" });
+} catch (error) {
+  console.error("Error adding data:", error);
+
+  // Handle known validation errors (example: if addData throws custom validation errors)
+  if (error.name === "ValidationError") {
+    return res.status(400).json({ message: error.message || "Validation failed." });
+  }
+
+  // Handle database connection errors
+  if (error.message && error.message.includes("ECONNREFUSED")) {
+    return res.status(503).json({ message: "Database connection refused. Try again later." });
+  }
+
+  // Handle permission errors
+  if (error.message && error.message.toLowerCase().includes("permission")) {
+    return res.status(403).json({ message: "Permission denied. You don't have access." });
+  }
+
+  // Default fallback
+  return res.status(500).json({ message: "An unknown error occurred. Please try again later." });
+}
+});
+
+// Update an existing document by _id
+app.put("/admin-data/:id", async (req, res) => {
+  const { id } = req.params;
   const { heading, content } = req.body;
 
   if (!heading || !content) {
     return res.status(400).json({ message: "Both heading and content are required." });
   }
+
   try {
-    await addData(heading, content);
-    return res.json({ message: "Data added successfully!" });
+    const collection = await db.collection(ASTRA_DB_COLLECTION_ADMIN);
+    // Update document by _id
+    const result = await collection.updateOne(
+      { _id: id },
+      { $set: { heading, text: content} }
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ message: "Document not found or no changes made." });
+    }
+
+    return res.json({ message: "Document updated successfully." });
   } catch (error) {
-    console.error("Error adding data:", error);
-    return res.status(500).json({ message: "Error adding data. Please try again later." });
+    console.error("Error updating document:", error);
+    return res.status(500).json({ message: "Error updating document." });
+  }
+});
+
+// Delete a document by _id
+app.delete("/admin-data/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const collection = await db.collection(ASTRA_DB_COLLECTION_ADMIN);
+    const result = await collection.deleteOne({ _id: id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Document not found." });
+    }
+
+    return res.json({ message: "Document deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    return res.status(500).json({ message: "Error deleting document." });
+  }
+});
+
+app.get("/last-scraped", async (req, res) => {
+  try {
+    const collection = db.collection(ASTRA_DB_COLLECTION);
+    
+    // Get the most recent document by timestamp
+    const cursor = collection.find({}, {
+      sort: { timestamp: -1 },
+      limit: 1,
+    });
+
+    const [latestDoc] = await cursor.toArray();
+
+    if (latestDoc && latestDoc.timestamp) {
+      res.json({ lastScraped: latestDoc.timestamp });
+    } else {
+      res.status(404).json({ message: "No timestamp found." });
+    }
+  } catch (err) {
+    console.error("Error fetching last scraped timestamp:", err);
+    res.status(500).json({ message: "Failed to fetch last scraped timestamp." });
   }
 });
 
