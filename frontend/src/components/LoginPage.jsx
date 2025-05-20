@@ -72,9 +72,9 @@ const LoginPage = () => {
         </div>
         <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="password">Password:</label>
-          <textarea
+          <input
             id="password"
-            type="text"
+            type="password"
             value={password}
             onChange={(e) => setPass(e.target.value)}
             style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
