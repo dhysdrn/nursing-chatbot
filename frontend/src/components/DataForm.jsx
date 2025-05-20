@@ -6,6 +6,9 @@ const DataForm = () => {
   const [text, setText] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
 
+  let fetchURL = import.meta.env.VITE_FETCH_URL;
+  fetchURL = fetchURL + "/admin-data";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -16,7 +19,7 @@ const DataForm = () => {
 
     try {
       
-      const response = await axios.post("http://localhost:5002/admin-data", {
+      const response = await axios.post(fetchURL, {
         heading,
         content: text, 
       });

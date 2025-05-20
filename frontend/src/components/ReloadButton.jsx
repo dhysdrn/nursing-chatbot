@@ -4,11 +4,14 @@ export default function ReloadButton() {
   const [reloadMsg, setReloadMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
+  let fetchURL = import.meta.env.VITE_FETCH_URL;
+  fetchURL = fetchURL + "/reload-data";
+
   const handleReload = async () => {
     setReloadMsg("Reloading data...");
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5002/reload-data", {
+      const res = await fetch(fetchURL, {
         method: "POST",
       });
       const data = await res.json();

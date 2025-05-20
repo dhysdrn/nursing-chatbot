@@ -4,7 +4,10 @@ import OpenAI from "openai/index.mjs";
 //import { streamText, StreamingTextResponse } from "ai";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
-import { addData } from './addData.js';
+import { addData, addUser } from './addData.js';
+import { checkUser } from './checkUser.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import cron from 'node-cron';
 import { loadSampleData, createCollection } from './loadDb.js';
 
@@ -179,6 +182,70 @@ app.post("/admin-data", async (req, res) => {
   } catch (error) {
     console.error("Error adding data:", error);
     return res.status(500).json({ message: "Error adding data. Please try again later." });
+  }
+});
+
+app.post("/create-user", async (req, res) => {
+  const { username, password, password2 } = req.body;
+
+  // Basic Authentication
+  if (password != password2) {
+    return res.json({ message: "Both passwords must be the same."})
+  }
+  else if (!username || !password || !password2) {
+    return res.json({ message: "Both username and both passwords are required." });
+  }
+
+  // Check if the user already exists
+  const user = await checkUser(username);
+  if (user) {
+    return res.json({ message: "User already exists." });
+  }
+
+  try {
+    await addUser(username, password);
+    return res.status(201).json({ message: "User added successfully!" });
+  } catch (error) {
+    console.error("Error checking data:", error);
+    return res.json({ message: `Error adding user. Please try again later.` });
+  }
+});
+
+app.post("/user-login", async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.json({ message: "Both username and password are required." });
+  }
+  try {
+    const user = await checkUser(username);
+    //console.log(user);
+    if (!user) {
+      return res.json({ message: 'User or password is wrong.' });
+    } else {
+      // Check if password exists
+      let passwordMatched;
+      try {
+      passwordMatched = await bcrypt.compare(password, user["password"]);
+      } catch (error) {
+          console.error("User doesn't exist", error);
+          return res.json({ message: 'User or password is wrong.' });
+      }
+      //console.log(passwordMatched);
+      // Check if password matches
+      if (passwordMatched) {
+        const token = jwt.sign({ userId: user["_id"] }, 'your-secret-key', {
+          expiresIn: '1h',
+          });
+        return res.status(201).json({ message: "Data successfully matched!", token });
+      } else {
+        return res.json({ message: 'User or password is wrong.' });
+      }
+    }
+
+  } catch (error) {
+    console.error("Error checking data:", error);
+    return res.json({ message: "Error checking data. Please try again later." });
   }
 });
 

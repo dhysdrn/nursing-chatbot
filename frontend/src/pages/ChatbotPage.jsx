@@ -12,7 +12,8 @@ import ThemeToggle from "../components/ThemeToggle";
 const ChatbotPage = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const chatBodyRef = useRef();
-  const fetchURL = import.meta.env.VITE_FETCH_URL;
+  let fetchURL = import.meta.env.VITE_FETCH_URL;
+  fetchURL = fetchURL + "/ask";
 
   /**
    * Sends the latest user message to the server and updates chat history with the bot's response.
