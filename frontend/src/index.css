@@ -235,46 +235,6 @@ a:hover {
 }
 
 
-
-
-
-/* ReloadButton styles */
-.reload-container {
-  width: 200px;
-}
-
-.reload-button {
-  padding: 8px;
-  margin-bottom: 10px;
-} 
-
-.reload-bar {
-  background: #eee;
-  height: 10px;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.reload-bar-fill {
-  height: 100%;
-  width: 100%;
-  background: #4caf50;
-  border-radius: 4px;
-  animation: loading 2s linear infinite;
-}
-
-@keyframes loading {
-  0% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
 .navbar-container {
   display: flex;
   min-height: 100vh;
@@ -454,4 +414,44 @@ a:hover {
 
 .navbar-title-link:hover {
   text-decoration: underline;
+}
+
+
+
+
+/* ReloadButton styles */
+.reload-container {
+  width: 200px;
+}
+
+.reload-button {
+  padding: 8px;
+  margin-bottom: 10px;
+} 
+
+.reload-bar {
+  background: #eee;
+  height: 10px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.reload-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: #4caf50;
+  border-radius: 4px;
+  animation: loading 2s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
