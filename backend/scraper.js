@@ -10,8 +10,6 @@ import cliProgress from "cli-progress";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Only scrape PDFs hosted on Green River's domain
-const ALLOWED_PDF_HOST = "greenriver.edu";
 
 /**
  * Main function to scrape nursing data (handles both HTML pages and PDF URLs).
@@ -99,7 +97,6 @@ export async function scrapeData() {
 
 /**
  * Fetches a page, extracts headings, text, and PDFs linked within.
- * Only processes PDFs hosted on the allowed domain.
  * @param {string} pageUrl
  * @returns {Promise<Object>} Extracted key-value pairs.
  */
@@ -110,21 +107,6 @@ async function fetchAndParsePage(pageUrl) {
     const { data: html } = await axios.get(pageUrl);
     const $ = cheerio.load(html);
     const title = $("title").text().trim() || "Untitled";
-
-    // // Handle embedded PDF links on this page (broken!!! does not check if the pdf has already been downloaded)
-    // for (const el of $("a[href$='.pdf']").toArray()) {
-    //   const href = $(el).attr("href");
-    //   if (!href) continue;
-    //   const pdfUrl = new URL(href, pageUrl).href;
-    //   // Skip PDFs not on the allowed host
-    //   if (!new URL(pdfUrl).hostname.includes(ALLOWED_PDF_HOST)) {
-    //     console.log(`🚫 Skipping external PDF: ${pdfUrl}`);
-    //     continue;
-    //   }
-    //   const textLabel = $(el).text().trim() || path.basename(href);
-    //   const pdfText = await extractPdfText(pdfUrl);
-    //   if (pdfText) result[`${title} - PDF: ${textLabel}`] = pdfText;
-    // }
 
     // Extract HTML headings and following content
     $("h2, h3, h4").each((_, el) => {
