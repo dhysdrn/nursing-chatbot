@@ -120,8 +120,15 @@ body {
 }
 
 .theme-toggle {
-  position: fixed;
   top: 20px;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+}
+
+.nav-button {
+  position: fixed;
   right: 20px;
   z-index: 1000;
   background-color: var(--card-bg);
@@ -133,13 +140,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
 }
 
-.theme-toggle:hover {
-  transform: scale(1.05);
+.admin-button {
+  top: 70px;
+}
+
+.login-icon {
+  margin-left: -4px;
 }
 
 .footer {
