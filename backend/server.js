@@ -390,8 +390,8 @@ app.post("/reload-data", async (req, res) => {
   }
 });
 
-// Every day at 2 AM
-cron.schedule('0 2 * * *', async () => {
+// Every month at 2 AM
+cron.schedule('0 2 1 * *', async () => {
   console.log("Scheduled data reload started...");
   try {
     await createCollection(ASTRA_DB_COLLECTION);
