@@ -2,11 +2,14 @@ import { useState } from "react";
 
 export default function ReloadButton() {
   const [reloadMsg, setReloadMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   let fetchURL = import.meta.env.VITE_FETCH_URL + "/reload-data";
 
   const handleReload = async () => {
     setReloadMsg("Reloading data...");
+    setLoading(true);
+
     try {
       const res = await fetch(fetchURL, {
         method: "POST",
@@ -17,6 +20,9 @@ export default function ReloadButton() {
         console.log(err)
       setReloadMsg("Reload failed.");
     }
+    finally {
+      setLoading(false); 
+    }
   };
 
   return (
@@ -24,6 +30,13 @@ export default function ReloadButton() {
       <button onClick={handleReload} style={{ padding: 8 }}>
         Reload Scraped Data
       </button>
+
+      {loading && (
+        <div className="reload-bar">
+          <div className="reload-bar-fill"></div>
+        </div>
+      )}
+
       <p>{reloadMsg}</p>
     </div>
   );
