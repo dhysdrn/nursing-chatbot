@@ -6,6 +6,7 @@ import Form from "./pages/admin-pages/Form";
 import AdminPage from "./pages/admin-pages/AdminPage";
 import SignupPage from "./components/SignupPage";
 import LoginPage from "./components/LoginPage";
+import LinksForm from "./pages/admin-pages/LinksForm"
 
 export default function App() {
   return (
@@ -18,7 +19,10 @@ export default function App() {
         <Route path="admin" element={<NavBar />}>
           <Route index element={<AdminPage />} />
           <Route path="database" element={<Database />} />
-          <Route path="form" element={<Form />} />
+          <Route path="form">
+            <Route path="input" element={<Form />} />
+            <Route path="links" element={<LinksForm />} />
+          </Route>
         </Route>
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>

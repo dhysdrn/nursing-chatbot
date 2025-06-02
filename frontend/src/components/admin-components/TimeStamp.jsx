@@ -19,7 +19,13 @@ const TimeStamp = () => {
         setLastScraped(res.data.lastScraped);
       } catch (err) {
         console.error("Failed to fetch last scraped timestamp:", err);
-        setError("Could not fetch timestamp.");
+        if (err.response?.status === 404) {
+          setError("No database connected.");
+        } else if (err.code === "ECONNREFUSED" || err.message.includes("Network")) {
+          setError("No database connected.");
+        } else {
+          setError("Could not fetch timestamp.");
+        }
       }
     };
 

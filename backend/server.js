@@ -10,12 +10,14 @@ import jwt from 'jsonwebtoken';
 import cron from 'node-cron';
 import { loadSampleData, createCollection } from './loadDb.js';
 import rateLimit from "express-rate-limit";
+import linksRoutes from './linksEditor.js';
 
 const app = express();
 const port = 5002;
 
 app.use(cors());
 app.use(express.json());
+app.use('/api', linksRoutes);
 
 let nursingDataCache = null;
 let lastTopic = null;
