@@ -33,7 +33,7 @@ const ThemeToggle = () => {
   return (
     <button 
       onClick={toggleTheme}
-      className="theme-toggle"
+      className="theme-toggle nav-button"
       aria-label="Toggle theme"
     >
       {isDarkMode ? (

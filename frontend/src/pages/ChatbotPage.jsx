@@ -3,6 +3,8 @@ import ChatForm from "../components/ChatForm";
 import GreenRiverIcon from "../components/GreenRiverIcon";
 import ChatMessage from "../components/ChatMessage";
 import ThemeToggle from "../components/ThemeToggle";
+import AdminButton from "../components/AdminButton";
+
 
 /**
  * Main application component for the Advising Chatbot.
@@ -50,6 +52,7 @@ const ChatbotPage = () => {
   return (
       <div className="app-container">
         <ThemeToggle/>
+        <AdminButton/>
         <div className="chat-container">
           {/* ChatBot Header */}
           <div className="header">
