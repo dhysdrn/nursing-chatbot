@@ -9,9 +9,9 @@ export default function NavBar() {
   return (
     <div className="navbar-container">
       <aside className="navbar-sidebar">
-        <NavLink to="/admin" className="navbar-title-link">
-          <h2 className="navbar-title">Admin</h2>
-        </NavLink>
+        <div className="navbar-header">
+          Admin Panel
+        </div>
         <nav className="navbar-nav">
           <NavLink
             to="database"
@@ -29,11 +29,32 @@ export default function NavBar() {
           >
             Form
           </NavLink>
-          <LogoutButton />
+                <div className="navbar-sublinks">
+            <NavLink
+              to="form/input"
+              className={({ isActive }) =>
+                isActive ? "navbar-sublink navbar-sublink-active" : "navbar-sublink"
+              }
+            >
+              Input Form
+            </NavLink>
+            <NavLink
+              to="form/links"
+              className={({ isActive }) =>
+                isActive ? "navbar-sublink navbar-sublink-active" : "navbar-sublink"
+              }
+            >
+              Links Form
+            </NavLink>
+          </div>
         </nav>
+        <div className="navbar-footer">
+          © 2025 Admin Panel 
+          <LogoutButton />
+        </div>
       </aside>
 
-      <main className="navbar-content">
+      <main className="main">
         <Outlet />
       </main>
     </div>
