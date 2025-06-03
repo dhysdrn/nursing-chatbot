@@ -46,6 +46,14 @@ export default function NavBar() {
             >
               Links Form
             </NavLink>
+            <NavLink
+              to="form/create-user"
+              className={({ isActive }) =>
+                isActive ? "navbar-sublink navbar-sublink-active" : "navbar-sublink"
+              }
+            >
+              Create User Form
+            </NavLink>
           </div>
         </nav>
         <div className="navbar-footer">

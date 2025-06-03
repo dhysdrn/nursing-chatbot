@@ -6,6 +6,7 @@ const pageTitles = {
   "/admin/form": "Form",
   "/admin/form/input": "Input Form",
   "/admin/form/links": "Links Form",
+  "/admin/form/create-user": "Create User Form",
 };
 
 export default function PageHeader() {

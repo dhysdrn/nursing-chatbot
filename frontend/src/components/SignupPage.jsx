@@ -8,9 +8,34 @@ const SignupPage = () => {
   const [password, setPass] = useState("");
   const [password2, setPass2] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
+  const [firstTime, setFirstTime] = useState(null);
   
   let fetchURL = import.meta.env.VITE_FETCH_URL;
+  const dbFetchURL = fetchURL + "/db-check";
   fetchURL = fetchURL + "/create-user";
+
+  const checkDB = async () => {
+    try {
+      const dbResponse = await axios.post(dbFetchURL);
+      if (dbResponse.status == 202) {
+        setFirstTime(true);
+      } else {
+        setFirstTime(false);
+      }
+    } catch (error) {
+      console.log(`There was an error: ${error}`);
+      setResponseMessage(`Connection to backend failed. Please try again.`);
+    }
+  }
+
+  // Checks if the user is logged in
+  if (!localStorage.token) {
+    checkDB();
+    // Checks if it's the user's first time to the signup page
+    if (firstTime == false) {
+      return <Navigate to="/admin" />
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,9 +96,9 @@ const SignupPage = () => {
         </div>
         <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="password">Password:</label>
-          <textarea
+          <input
             id="password"
-            type="text"
+            type="password"
             value={password}
             onChange={(e) => setPass(e.target.value)}
             style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
@@ -82,9 +107,9 @@ const SignupPage = () => {
         </div>
         <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="password2">Type Password Again:</label>
-          <textarea
+          <input
             id="password2"
-            type="text"
+            type="password"
             value={password2}
             onChange={(e) => setPass2(e.target.value)}
             style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
@@ -94,7 +119,9 @@ const SignupPage = () => {
         <button type="submit">Submit</button>
       </form>
 
-      <div>Already have a user? <Link to="/login"><button>Signup Page</button></Link></div>
+      {firstTime &&
+        <div>Already have a user? <Link to="/login"><button>Login Page</button></Link></div>
+      }
     </div>
   );
 };

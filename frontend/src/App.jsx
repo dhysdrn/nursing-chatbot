@@ -6,7 +6,8 @@ import Form from "./pages/admin-pages/Form";
 import AdminPage from "./pages/admin-pages/AdminPage";
 import SignupPage from "./components/SignupPage";
 import LoginPage from "./components/LoginPage";
-import LinksForm from "./pages/admin-pages/LinksForm"
+import LinksForm from "./pages/admin-pages/LinksForm";
+import CreateUserForm from "./pages/admin-pages/CreateUserForm";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="form">
             <Route path="input" element={<Form />} />
             <Route path="links" element={<LinksForm />} />
+            <Route path="create-user" element={<CreateUserForm />} />
           </Route>
         </Route>
         <Route path="/signup" element={<SignupPage />}></Route>
