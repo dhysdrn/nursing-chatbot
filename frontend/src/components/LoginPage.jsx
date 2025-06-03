@@ -5,13 +5,29 @@ import { Link, Navigate } from "react-router-dom";
 const LoginPage = () => {
   const [username, setUser] = useState("");
   const [password, setPass] = useState("");
-  const [message, setMessage] = useState(null)
+  const [message, setMessage] = useState(null);
+  const [firstTime, setFirstTime] = useState(null);
 
   let fetchURL = import.meta.env.VITE_FETCH_URL;
-  fetchURL = fetchURL + "/user-login";
+  const dbFetchURL = fetchURL + "/db-check";
+  const loginFetchURL = fetchURL + "/user-login";
 
   // Remove the state given from /signup route
   localStorage.removeItem("signedup")
+
+  const checkDB = async () => {
+    try {
+      const dbResponse = await axios.post(dbFetchURL);
+      if (dbResponse.status == 202) {
+        setFirstTime(true);
+      }
+    } catch (error) {
+      console.log(`There was an error: ${error}`);
+      setMessage(`Connection to backend failed. Please try again.`);
+    }
+  }
+  
+  checkDB();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +41,7 @@ const LoginPage = () => {
     try {
       
       // Attempts to ask backend for validation
-      const dbResponse = await axios.post(fetchURL, {
+      const dbResponse = await axios.post(loginFetchURL, {
         username,
         password
       });
@@ -84,7 +100,9 @@ const LoginPage = () => {
         <button type="submit">Submit</button>
       </form>
 
-      <div>Need to Create A User? <Link to="/signup"><button>Signup Page</button></Link></div>
+      {firstTime &&
+          <div>Database is empty. Want to create the first user? <Link to="/signup"><button>Signup Page</button></Link></div>
+        }
     </div>
   );
 };

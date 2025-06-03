@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import OpenAI from "openai/index.mjs";
 import { DataAPIClient } from "@datastax/astra-db-ts";
-import { ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
+import { ASTRA_DB_COLLECTION_USERS, ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
 import { addData, addUser } from './addData.js';
 import { checkUser } from './checkUser.js';
 import bcrypt from 'bcrypt';
@@ -376,6 +376,22 @@ app.post("/user-login", async (req, res) => {
   } catch (error) {
     console.error("Error checking data:", error);
     return res.json({ message: "Error checking data. Please try again later." });
+  }
+});
+
+app.post("/db-check", async (req, res) => {
+  try { 
+    // Check if the usertable exists 
+    const collection = await db.collection(ASTRA_DB_COLLECTION_USERS);
+    try {
+      const cursor = await collection.findOne()
+      res.status(200).json({ message: "User table checked successfully. (Exists)"});
+    } catch (no_exist) {
+      res.status(202).json({ message: "User table checked successfully. (Doesn't exist)"});
+    }
+  } catch (err) {
+    console.error("Failed to check user table:", err);
+    res.status(500).json({ message: "Failed to check user table."});
   }
 });
 
