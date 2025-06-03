@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Plus } from 'lucide-react';
 
 const DataForm = () => {
   const [category, setCategory] = useState("");
@@ -43,65 +44,77 @@ const DataForm = () => {
   };
 
   return (
-    <div className="data-form-container">
-      <h1>Add a New FAQ Entry</h1>
-      <h3>Instructions:</h3>
-      <p>
-        Use this form to add a new entry to the nursing chatbot database.
-        <br />
-        <strong>Important:</strong> The search system relies on the content you provide in the detailed answer field.
-        <br />
-        Please make sure the content field contains a comprehensive and clear explanation or information that the AI can retrieve.
-        <br />
-        The category/topic field is for organizing entries and will <em>not</em> be searchable by the AI.
-      </p>
+    <div className="form-wrapper">
+      <div className="data-form-container"> 
 
-      <form onSubmit={handleSubmit} noValidate>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="category" className="data-form-label">
-            Category / Topic
-          </label>
-          <input
-            id="category"
-            type="text"
-            placeholder="E.g. Admission, Program Requirements, Financial Aid"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="data-form-input"
-            required
-          />
-        </div>
+        <h3 className="form-title"><Plus /> FAQ Information</h3>
+        <form onSubmit={handleSubmit} noValidate>
+          <div style={{ marginBottom: "1rem" }}>
+            <label htmlFor="category" className="data-form-label">
+              Category / Topic
+            </label>
+            <input
+              id="category"
+              type="text"
+              placeholder="E.g. Admission, Program Requirements, Financial Aid"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="data-form-input"
+              required
+            />
+          </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="text" className="data-form-label">
-            Detailed Answer / Content
-          </label>
-          <textarea
-            id="text"
-            placeholder="Provide a detailed explanation or information here. This will be used by the AI to find relevant answers."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="data-form-textarea"
-            rows={8}
-            required
-          />
-          <p className={`char-count ${text.length < minLength ? "invalid" : "valid"}`}>
-            {text.length} / {minLength} characters
+          <div style={{ marginBottom: "1rem" }}>
+            <label htmlFor="text" className="data-form-label">
+              Detailed Answer / Content
+            </label>
+            <textarea
+              id="text"
+              placeholder="Provide a detailed explanation or information here. This will be used by the AI to find relevant answers."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className="data-form-textarea"
+              rows={8}
+              required
+            />
+            <p className={`char-count ${text.length < minLength ? "invalid" : "valid"}`}>
+              {text.length} / {minLength} minimum characters
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!isFormValid}
+            className={`data-form-button ${isFormValid ? "enabled" : ""}`}
+          >
+            Submit
+          </button>
+        </form>
+
+        {error && <p className="error-message">{error}</p>}
+        {responseMessage && !error && <p className="success-message">{responseMessage}</p>}
+      </div>
+      
+      <div className="data-form-instructions">
+        <h3>Form Help:</h3>
+        <div className="form-description">
+          <p>
+            Use this form to add a new entry to the nursing chatbot database.
+          </p>
+          <p>
+            <strong>Important:</strong> The search system relies on the content you provide in the detailed answer field.
+          </p>
+          <p>
+            Please make sure the content field contains a comprehensive and clear explanation or information that the AI can retrieve. It must contain at least <strong>50 characters</strong> so the AI can properly recognize and retrieve it.
+          </p>
+          <p>
+            The category/topic field is for organizing entries and will <em>not</em> be searchable by the AI.
           </p>
         </div>
+      </div>
 
-        <button
-          type="submit"
-          disabled={!isFormValid}
-          className={`data-form-button ${isFormValid ? "enabled" : ""}`}
-        >
-          Submit
-        </button>
-      </form>
-
-      {error && <p className="error-message">{error}</p>}
-      {responseMessage && !error && <p className="success-message">{responseMessage}</p>}
     </div>
+    
   );
 };
 

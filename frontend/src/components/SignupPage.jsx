@@ -75,53 +75,57 @@ const SignupPage = () => {
   }
 
   return (
-    <div style={{ padding: "1rem", maxWidth: "600px", margin: "0 auto" }}>
+    <div className="create-user-container">
       <h2>Create Admin</h2>
-      {responseMessage &&
-          <div className="alert">
-            <p>{responseMessage}</p>
-          </div>
-        }
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="username">Username:</label>
+
+      {responseMessage && (
+        <div className="alert">
+          <p>{responseMessage}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="create-user-form">
+        <div className="form-group">
           <input
             id="username"
             type="text"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUser(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
             required
           />
         </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password">Password:</label>
+
+        <div className="form-group">
           <input
             id="password"
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPass(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
             required
           />
         </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password2">Type Password Again:</label>
+
+        <div className="form-group">
           <input
             id="password2"
             type="password"
+            placeholder="Type Password Again"
             value={password2}
             onChange={(e) => setPass2(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
             required
           />
         </div>
-        <button type="submit">Submit</button>
+
+        <button type="submit" className="submit-button">Submit</button>
       </form>
 
-      {firstTime &&
-        <div>Already have a user? <Link to="/login"><button>Login Page</button></Link></div>
-      }
+      {firstTime && (
+        <div className="login-redirect">
+          Already have a user? <Link to="/login"><button className="login-button">Login Page</button></Link>
+        </div>
+      )}
     </div>
   );
 };

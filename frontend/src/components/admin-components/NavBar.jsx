@@ -1,5 +1,7 @@
 import { NavLink, Outlet, Navigate } from "react-router-dom";
 import LogoutButton from "../../components/LogoutButton";
+import { House } from 'lucide-react';
+import GreenRiverIcon from "../GreenRiverIcon";
 
 export default function NavBar() {
   if (!localStorage.token) {
@@ -9,55 +11,52 @@ export default function NavBar() {
   return (
     <div className="navbar-container">
       <aside className="navbar-sidebar">
-        <div className="navbar-header">
-          Admin Panel
+        <div className="icon-wrapper">
+          <GreenRiverIcon />
         </div>
+        <div className="navbar-header">Admin Panel</div>
         <nav className="navbar-nav">
           <NavLink
-            to="database"
+            to="/admin"
+            end
             className={({ isActive }) =>
               isActive ? "navbar-link navbar-link-active" : "navbar-link"
             }
           >
-            Database
+            <div className="dashboard-link"><House size={16} /> Dashboard</div>
+            
           </NavLink>
-          <NavLink
-            to="form"
-            className={({ isActive }) =>
-              isActive ? "navbar-link navbar-link-active" : "navbar-link"
-            }
-          >
-            Form
-          </NavLink>
-                <div className="navbar-sublinks">
+
+          <div className="form-header">Forms</div>
+
+          <div className="navbar-sublinks">
             <NavLink
-              to="form/input"
+              to="/admin/form/input"
               className={({ isActive }) =>
                 isActive ? "navbar-sublink navbar-sublink-active" : "navbar-sublink"
               }
             >
-              Input Form
+              FAQ Entry
             </NavLink>
             <NavLink
-              to="form/links"
+              to="/admin/form/links"
               className={({ isActive }) =>
                 isActive ? "navbar-sublink navbar-sublink-active" : "navbar-sublink"
               }
             >
-              Links Form
+              Manage Links
             </NavLink>
             <NavLink
-              to="form/create-user"
+              to="/admin/form/create-user"
               className={({ isActive }) =>
                 isActive ? "navbar-sublink navbar-sublink-active" : "navbar-sublink"
               }
             >
-              Create User Form
+              Create User
             </NavLink>
           </div>
         </nav>
         <div className="navbar-footer">
-          © 2025 Admin Panel 
           <LogoutButton />
         </div>
       </aside>

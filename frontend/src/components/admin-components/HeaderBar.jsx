@@ -1,12 +1,11 @@
 import { useLocation } from "react-router-dom";
+import ThemeToggle from "../../components/ThemeToggle";
 
 const pageTitles = {
-  "/admin/": "Admin Home",
-  "/admin/database": "Vector Database",
-  "/admin/form": "Form",
-  "/admin/form/input": "Input Form",
-  "/admin/form/links": "Links Form",
-  "/admin/form/create-user": "Create User Form",
+  "/admin": "Home",
+  "/admin/form/input": "FAQ Entry",
+  "/admin/form/links": "Manage Links",
+  "/admin/form/create-user": "Create User",
 };
 
 export default function PageHeader() {
@@ -19,12 +18,13 @@ export default function PageHeader() {
   if (path.startsWith("/admin/form")) {
     prefix = "Form";
   } else if (path.startsWith("/admin")) {
-    prefix = "Main";
+    prefix = "Admin";
   }
 
   return (
     <div className="page-header">
-      <p><b>{prefix} </b>/ {title}</p>
+      <p><b>{prefix} </b>/ {title}</p>  <ThemeToggle />
     </div>
+  
   );
 }
