@@ -20,26 +20,6 @@ const openai = new OpenAI({ apiKey: AI_API_KEY });
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
 const db = client.db(ASTRA_DB_API_ENDPOINT, { namespace: ASTRA_DB_NAMESPACE });
 
-// // Function to create the admin collection if it doesn't exist
-// const createAdminCollection = async () => {
-//   try {
-//     // Check if the collection exists
-//     const collections = await db.listCollections();
-//     if (!collections.includes(ASTRA_DB_COLLECTION_ADMIN)) {
-//       const res = await db.createCollection(ASTRA_DB_COLLECTION_ADMIN, {
-//         vector: {
-//           dimension: 1536,
-//           metric: "dot_product",
-//         },
-//       });
-//       console.log("Admin data collection created:", res);
-//     } else {
-//       console.log("Collection already exists.");
-//     }
-//   } catch (error) {
-//     console.error("Error creating admin data collection:", error);
-//   }
-// };
 
 // Function to add admin data into the admin collection
 const addData = async (heading, content) => {
@@ -86,8 +66,5 @@ const addUser = async (username, password) => {
     console.error("Error inserting admin:", error);
   }
 };
-
-// // Ensure the admin collection exists
-// createAdminCollection();
 
 export { addData, addUser };

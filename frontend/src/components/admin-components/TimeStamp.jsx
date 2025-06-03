@@ -1,16 +1,17 @@
+
 import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import axios from "axios";
 
+
 const TimeStamp = () => {
   const [lastScraped, setLastScraped] = useState(null);
   const [error, setError] = useState(null);
 
-
-   const fetchURL = useMemo(() => {
-      return `${import.meta.env.VITE_FETCH_URL}/last-scraped`;
-    }, []);
+  const fetchURL = useMemo(() => {
+    return `${import.meta.env.VITE_FETCH_URL}/last-scraped`;
+  }, []);
 
   useEffect(() => {
     const fetchLastScraped = async () => {
@@ -19,9 +20,7 @@ const TimeStamp = () => {
         setLastScraped(res.data.lastScraped);
       } catch (err) {
         console.error("Failed to fetch last scraped timestamp:", err);
-        if (err.response?.status === 404) {
-          setError("No database connected.");
-        } else if (err.code === "ECONNREFUSED" || err.message.includes("Network")) {
+        if (err.response?.status === 404 || err.code === "ECONNREFUSED" || err.message.includes("Network")) {
           setError("No database connected.");
         } else {
           setError("Could not fetch timestamp.");
@@ -33,20 +32,23 @@ const TimeStamp = () => {
   }, [fetchURL]);
 
   dayjs.extend(relativeTime);
+
   return (
-    <div style={{ marginBottom: "1rem" }}>
-      {error ? (
-        <p style={{ color: "red" }}>{error}</p>
-      ) : lastScraped ? (
-        <p>
-            <strong>Last Scraped:</strong>{" "}
+    <div className="timestamp-container">
+      <h3 className="timestamp-header">Last Scraped</h3>
+      <div className="timestamp-content">
+        {error ? (
+          <p className="timestamp-error">{error}</p>
+        ) : lastScraped ? (
+          <p>
             {dayjs(lastScraped).fromNow()} (
             {dayjs(lastScraped).format("MMM D, YYYY, h:mm A")}
             )
-        </p>
-      ) : (
-        <p>Loading last scraped time...</p>
-      )}
+          </p>
+        ) : (
+          <p>Loading last scraped time...</p>
+        )}
+      </div>
     </div>
   );
 };

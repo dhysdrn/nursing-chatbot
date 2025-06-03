@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LogOut } from 'lucide-react';
 
 export default function LogoutButton() {
   const [logoutMsg, setLogoutMsg] = useState("");
@@ -19,7 +20,7 @@ export default function LogoutButton() {
   return (
     <div className="logout-container">
       <button onClick={handleLogout} className="logout-button">
-        Logout
+        <LogOut /> Logout
       </button>
 
       <p>{logoutMsg}</p>

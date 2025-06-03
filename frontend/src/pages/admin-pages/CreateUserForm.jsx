@@ -5,8 +5,11 @@ export default function CreateUserForm() {
   return (
     <>
       <PageHeader />
-      <SignupPage />
+      <div className="container">
+        <SignupPage />
+      </div>
     </>
+    
    
   );
 }

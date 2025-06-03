@@ -77,70 +77,70 @@ const VectorTable = () => {
   };
 
   return (
-    <div className="vector-table">
-      <h2>Vector Database Table</h2>
-
+    <div className="vector-table-container">
+      <h2>FAQ Database</h2>
       {loading && <p>Loading data...</p>}
       {error && <p style={{ color: "red" }}>Error: {error}</p>}
-
-      <table>
-        <thead>
-          <tr>
-            <th>Category / Topic</th>
-            <th>Content</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length > 0 ? (
-            data.map((item) => (
-              <tr key={item._id}>
-                <td>
-                  {editingId === item._id ? (
-                    <input
-                      type="text"
-                      value={editHeading}
-                      onChange={(e) => setEditHeading(e.target.value)}
-                    />
-                  ) : (
-                    item.heading
-                  )}
-                </td>
-                <td>
-                  {editingId === item._id ? (
-                    <textarea
-                      value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
-                      rows={4}
-                    />
-                  ) : (
-                    item.text
-                  )}
-                </td>
-                <td className="actions">
-                  {editingId === item._id ? (
-                    <>
-                      <button onClick={saveEdit}>Save</button>
-                      <button onClick={cancelEditing}>Cancel</button>
-                    </>
-                  ) : (
-                    <>
-                      <button onClick={() => startEditing(item)}>Edit</button>
-                      <button onClick={() => handleDelete(item._id)}>Delete</button>
-                    </>
-                  )}
+      <div className="vector-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Category / Topic</th>
+              <th>Content</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.length > 0 ? (
+              data.map((item) => (
+                <tr key={item._id}>
+                  <td>
+                    {editingId === item._id ? (
+                      <input
+                        type="text"
+                        value={editHeading}
+                        onChange={(e) => setEditHeading(e.target.value)}
+                      />
+                    ) : (
+                      item.heading
+                    )}
+                  </td>
+                  <td>
+                    {editingId === item._id ? (
+                      <textarea
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        rows={4}
+                      />
+                    ) : (
+                      item.text
+                    )}
+                  </td>
+                  <td className="actions">
+                    {editingId === item._id ? (
+                      <>
+                        <button onClick={saveEdit}>Save</button>
+                        <button onClick={cancelEditing}>Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => startEditing(item)}>Edit</button>
+                        <button onClick={() => handleDelete(item._id)}>Delete</button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3" style={{ textAlign: "center", padding: "8px" }}>
+                  No data available.
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="3" style={{ textAlign: "center", padding: "8px" }}>
-                No data available.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

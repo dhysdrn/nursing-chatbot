@@ -1,33 +1,32 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ChatbotPage from "./pages/ChatbotPage";
 import NavBar from "./components/admin-components/NavBar";
-import Database from "./pages/admin-pages/Database";
-import Form from "./pages/admin-pages/Form";
 import AdminPage from "./pages/admin-pages/AdminPage";
-import SignupPage from "./components/SignupPage";
-import LoginPage from "./components/LoginPage";
+import Form from "./pages/admin-pages/Form";
 import LinksForm from "./pages/admin-pages/LinksForm";
 import CreateUserForm from "./pages/admin-pages/CreateUserForm";
+import SignupPage from "./components/SignupPage";
+import LoginPage from "./components/LoginPage";
+import ChatbotPage from "./pages/ChatbotPage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Home page — no navbar */}
+        {/* Home page */}
         <Route index element={<ChatbotPage />} />
 
-        {/* Admin layout with nested routes */}
+        {/* Admin Page */}
         <Route path="admin" element={<NavBar />}>
           <Route index element={<AdminPage />} />
-          <Route path="database" element={<Database />} />
-          <Route path="form">
-            <Route path="input" element={<Form />} />
-            <Route path="links" element={<LinksForm />} />
-            <Route path="create-user" element={<CreateUserForm />} />
-          </Route>
+          <Route path="form" element={<Form />} />
+        
+          <Route path="form/input" element={<Form />} />
+          <Route path="form/links" element={<LinksForm />} />
+          <Route path="form/create-user" element={<CreateUserForm />} />
         </Route>
-        <Route path="/signup" element={<SignupPage />}></Route>
-        <Route path="/login" element={<LoginPage />}></Route>
+        
+        <Route path="signup" element={<SignupPage />} />
+        <Route path="login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );

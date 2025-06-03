@@ -67,42 +67,53 @@ const LoginPage = () => {
   }
 
   return (
-    <div style={{ padding: "1rem", maxWidth: "600px", margin: "0 auto" }}>
+   <div className="create-user-container">
       <h2>Login</h2>
-      {message &&
-          <div className="alert">
-            <p>{message}</p>
-          </div>
-        }
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="username">Username:</label>
+
+      {message && (
+        <div className="alert">
+          <p>{message}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="create-user-form">
+        <div className="form-group">
           <input
             id="username"
             type="text"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUser(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
             required
           />
         </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password">Password:</label>
+
+        <div className="form-group">
           <input
             id="password"
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPass(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem" }}
             required
           />
         </div>
-        <button type="submit">Submit</button>
+
+        <button type="submit" className="submit-button">
+          Submit
+        </button>
       </form>
 
-      {firstTime &&
-          <div>Database is empty. Want to create the first user? <Link to="/signup"><button>Signup Page</button></Link></div>
-        }
+      {firstTime && (
+        <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+          Database is empty. Want to create the first user?{" "}
+          <Link to="/signup">
+            <button className="submit-button" style={{ padding: "0.4rem 1rem", fontSize: "0.9rem" }}>
+              Signup Page
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
