@@ -33,9 +33,10 @@ const db = client.db(ASTRA_DB_API_ENDPOINT, { namespace: ASTRA_DB_NAMESPACE });
 /**
  * 
  * @param {string} userQuestion 
+ * @param {object, object} history
  * @returns 
  */
-const rag = async (userQuestion) => {
+const rag = async (userQuestion, history) => {
   console.log("Attempting AI response...");
   let docContext = "";
 
@@ -83,13 +84,13 @@ const rag = async (userQuestion) => {
     docContext = "";
   }
 
-  const template = {
+  let template = {
     role: "system", 
     content: `You are an AI assistant who knows everything about Green River College Nursing.
     Use the below context to augment what you know about Green River College Nursing.
     The context will provide you with the most recent data from the Nursing websites.
     If the context doesn't include the information you need, do not answer the question based on existing knowledge and tell the user that you cannot answer the question and give example questions that relate to the user's question in the form of a question they could ask.
-    If no answer to the question they asked, suggest that they should email nursing@greenriver.edu .
+    If no answer to the question they asked, and it appears the user is very confused (6+ messsages) suggest that they should email nursing@greenriver.edu .
     Format responses using markdown where applicable and don't return images.
     Give a response as an HTML format. Try not to add titles. If links are provided, make sure they go into a new tab.
     --------------------
@@ -102,6 +103,12 @@ const rag = async (userQuestion) => {
     `
   }
 
+  let newHistory = [];
+    for (let i = 0; i < history.length; i++) {
+      newHistory.push(history[i]);
+    }
+
+  
   //TODO: Add previous messages and questions asked before. 
 
   //const aiResponse = "";
@@ -109,12 +116,11 @@ const rag = async (userQuestion) => {
   let aiResponse = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     //stream: true,
-    messages: [template]
+    messages: [template, ...history]
   })
 
   //Extracts the text from the AI response
   aiResponse = aiResponse.choices[0].message.content.trim();
-  //console.log(aiResponse);
 
   //TODO: Add stream to make the text load as the user is getting the response.
   // const stream = OpenAIStream(response);
@@ -130,7 +136,11 @@ const rag = async (userQuestion) => {
  * @returns 
  */
 const removeFiller = (answer) => {
-  return answer.substring(7, answer.length-4)
+  if (answer.charAt(0)== '`') {
+    return answer.substring(7, answer.length-4)
+  } else {
+    return answer;
+  }
 }
 
 // Rate limiting, max 10 requests per IP in 15 minutes
@@ -150,12 +160,12 @@ const limiter = rateLimit({
  */
 app.post("/ask", async (req, res) => {
   const userQuestion = req.body.question || "";
+  const history = req.body.history;
   console.log(`Processing question: "${userQuestion}"`);
 
-  let response = "";
   let answer = "";
   //send the question off to OpenAI using pre-exisiting knowledge
-  answer = await rag(userQuestion);
+  answer = await rag(userQuestion, history);
   //Filters out the ```html at the start and the end
   answer = removeFiller(answer);
 
