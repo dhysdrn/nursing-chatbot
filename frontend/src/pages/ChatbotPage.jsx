@@ -28,14 +28,14 @@ const ChatbotPage = () => {
       const response = await fetch(fetchURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: lastMessage.text }),
+        body: JSON.stringify({ question: lastMessage.content, history: history }),
       });
   
       const data = await response.json();
   
       setChatHistory((prevHistory) => [
         ...prevHistory,
-        { role: "model", text: data.response },
+        { role: "system", content: data.response },
       ]);
     } catch (error) {
       console.error("Error fetching bot response:", error);

@@ -22,20 +22,20 @@ const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
         
         inputRef.current.value = "";
 
-        const newHistory = [...chatHistory, { role: "user", text: userMessage }];
+        const newHistory = [...chatHistory, { role: "user", content: userMessage }];
         
         setChatHistory(newHistory);
         console.log("Updated chatHistory with user message:", newHistory);  
 
         // Display "Thinking..." while waiting for a bot response
-        const thinkingMessage = { role: "model", text: "Thinking." };
+        const thinkingMessage = { role: "system", content: "Thinking." };
         setChatHistory((prevHistory) => [...prevHistory, thinkingMessage]);
         console.log("Added 'Thinking.' to chatHistory");
 
         let dotCount = 1;
         const intervalId = setInterval(() => {
             dotCount = (dotCount % 3) + 1; 
-            const newThinkingMessage = { role: "model", text: `Thinking${".".repeat(dotCount)}` };
+            const newThinkingMessage = { role: "system", content: `Thinking${".".repeat(dotCount)}` };
             setChatHistory((prevHistory) => [...prevHistory.slice(0, -1), newThinkingMessage]);
         }, 500); 
      
