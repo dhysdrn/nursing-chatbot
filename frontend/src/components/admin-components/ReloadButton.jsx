@@ -73,7 +73,7 @@ export default function ReloadButton() {
       <h1 className="reload-title">
          <RotateCcw color="#2c8a4d"/> {loading ? "Reloading..." : "Reload Data"}
       </h1>
-      {!loading && <p>Click here to reload scraped data</p>}
+      {!loading && <p>Click here to reload scraped data <br />(<strong>Note:</strong> This process may take up to 10 minutes.)</p>}
 
       {loading && (
         <>

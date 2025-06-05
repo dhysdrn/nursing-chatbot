@@ -11,12 +11,12 @@ const AdminPage = () => {
     <PageHeader />
     <div className="container">
       <h2>Admin Dashboard</h2>
-      <VectorTable />
-      <AdminTable />
       <div className="admin-controls">
         <TimeStamp />
         <ReloadButton />
       </div>
+      <VectorTable />
+      <AdminTable />
     </div>
     </>
    
