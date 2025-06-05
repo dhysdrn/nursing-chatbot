@@ -365,6 +365,7 @@ a:hover {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   animation: fadeIn 0.5s ease-out;
+  margin-top: 20px;
 }
 
 .vector-table {
@@ -578,7 +579,7 @@ a:hover {
 
 .data-form-instructions {
   flex: 1;
-  min-width: 240px;
+  min-width: 500px;
   background: var(--secondary-bg);
   padding: 2rem;
   border-radius: 12px;

@@ -405,6 +405,65 @@ app.post("/db-check", async (req, res) => {
   }
 });
 
+// Get all users (for AdminTable)
+app.get("/users", async (req, res) => {
+  try {
+    const collection = await db.collection(ASTRA_DB_COLLECTION_USERS);
+    const users = await collection.find({}).toArray();
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Failed to fetch users." });
+  }
+});
+
+// Update a user by ID
+app.put("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required." });
+  }
+
+  try {
+    const collection = await db.collection(ASTRA_DB_COLLECTION_USERS);
+    const result = await collection.updateOne(
+      { _id: id },
+      { $set: { username, password } }
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ message: "User not found or no changes made." });
+    }
+
+    res.json({ message: "User updated successfully." });
+  } catch (err) {
+    console.error("Error updating user:", err);
+    res.status(500).json({ message: "Failed to update user." });
+  }
+});
+
+// Delete a user by ID
+app.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const collection = await db.collection(ASTRA_DB_COLLECTION_USERS);
+    const result = await collection.deleteOne({ _id: id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({ message: "User deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    res.status(500).json({ message: "Failed to delete user." });
+  }
+});
+
+
 app.post("/reload-data", async (req, res) => {
   try {
     await createCollection(ASTRA_DB_COLLECTION);
