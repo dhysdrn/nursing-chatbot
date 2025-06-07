@@ -334,7 +334,7 @@ a:hover {
   color: var(--primary-text);
   font-weight: 600;
 }
-
+ 
 .navbar-link:hover,
 .navbar-sublink:hover {
   background-color:var(--primary-hover);
