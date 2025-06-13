@@ -1,5 +1,4 @@
 https://www.greenriver.edu/campus/campus-resources/ctw-benefits-hub/benefits-hub.html
-https://www.greenriver.edu/campus/campus-resources/counseling-services/
 https://www.greenriver.edu/campus/campus-resources/disability-support-services/index.html
 https://www.greenriver.edu/campus/campus-resources/ctclink/students/index.html
 https://www.greenriver.edu/campus/campus-resources/ctw-benefits-hub/
@@ -53,3 +52,4 @@ https://catalog.greenriver.edu/preview_program.php?catoid=8&poid=2226
 https://greenriver.edu/students/media/documents/degrees-and-programs/nursing/2025-26%20Nursing%20Student%20Handbook%20Final.pdf
 https://www.greenriver.edu/students/media/documents/degrees-and-programs/practical-nursing/2024-25-nursing-student-handbook.pdf
 https://greenriver.edu/students/media/documents/degrees-and-programs/nursing/2.26.25%20Green%20River%20College%20Nursing%20Guide%20FINAL.pdf
+https://www.greenriver.edu/campus/campus-resources/counseling-services/
