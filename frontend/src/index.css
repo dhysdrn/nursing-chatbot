@@ -471,7 +471,7 @@ a:hover {
   padding: 1rem;
   border-radius: 8px;
   transition: 0.3s;
-  width: 300px;
+  width: 310px;
   height: 130px;
   background-color: var(--card-bg);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);

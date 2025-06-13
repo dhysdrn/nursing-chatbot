@@ -26,6 +26,14 @@ export default function NavBar() {
             <div className="dashboard-link"><House size={16} /> Dashboard</div>
             
           </NavLink>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? "navbar-link navbar-link-active" : "navbar-link"
+            }
+          >
+            <div className="dashboard-link"> Chatbot</div>
+          </NavLink>
 
           <div className="form-header">Forms</div>
 

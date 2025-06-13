@@ -305,19 +305,12 @@ app.delete("/admin-data/:id", async (req, res) => {
 app.get("/last-scraped", async (req, res) => {
   try {
     const collection = db.collection(ASTRA_DB_COLLECTION);
-    
-    // Get the most recent document by timestamp
-    const cursor = collection.find({}, {
-      sort: { timestamp: -1 },
-      limit: 1,
-    });
+    const doc = await collection.findOne({ _id: "meta_last_scraped" });
 
-    const [latestDoc] = await cursor.toArray();
-
-    if (latestDoc && latestDoc.timestamp) {
-      res.json({ lastScraped: latestDoc.timestamp });
+    if (doc && doc.lastScraped) {
+      res.json({ lastScraped: doc.lastScraped });
     } else {
-      res.status(404).json({ message: "No timestamp found." });
+      res.status(404).json({ message: "No scrape history found." });
     }
   } catch (err) {
     console.error("Error fetching last scraped timestamp:", err);
@@ -467,7 +460,7 @@ app.delete("/users/:id", async (req, res) => {
 app.post("/reload-data", async (req, res) => {
   try {
     await createCollection(ASTRA_DB_COLLECTION);
-    await loadSampleData({ wipe: true });
+    await loadSampleData();
     res.json({ message: "Data reloaded successfully." });
   } catch (err) {
     console.error("Failed to reload data:", err);
@@ -480,7 +473,7 @@ cron.schedule('0 2 1 * *', async () => {
   console.log("Scheduled data reload started...");
   try {
     await createCollection(ASTRA_DB_COLLECTION);
-    await loadSampleData({ wipe: true }); 
+    await loadSampleData(); 
     console.log("Scheduled data reload complete.");
   } catch (err) {
     console.error("Scheduled reload failed:", err);
