@@ -2,7 +2,6 @@ import PageHeader from "../../components/admin-components/HeaderBar";
 import ReloadButton from "../../components/admin-components/ReloadButton";
 import TimeStamp from "../../components/admin-components/TimeStamp";
 import VectorTable from "../../components/admin-components/VectorTable";
-import AdminTable from "../../components/admin-components/AdminTable";
 
 
 const AdminPage = () => {
@@ -16,7 +15,6 @@ const AdminPage = () => {
         <ReloadButton />
       </div>
       <VectorTable />
-      <AdminTable />
     </div>
     </>
    
