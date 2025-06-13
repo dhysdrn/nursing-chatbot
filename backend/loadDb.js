@@ -74,7 +74,7 @@ const loadSampleData = async ({ wipe = false } = {}) => {
   }
 
   const existingMap = new Map(existingDocs.map(doc => [doc._id, doc.hash]));
-  const allExistingIds = new Set(existingMap.keys()); // used to detect stale docs
+  const allExistingIds = new Set(existingMap.keys()); 
   const usedIds = new Set(); // tracks used IDs for deletion check later
 
   console.log(`ℹ️ Found ${existingDocs.length} existing documents in the collection.`);
@@ -145,10 +145,9 @@ const loadSampleData = async ({ wipe = false } = {}) => {
     headingCount++;
     inserted += toUpsert.length;
     updated += toUpsert.length;
-    console.log(`📦 [${headingCount}/${totalHeadings}] "${heading}" done. Inserted/Updated: ${toUpsert.length}`);
+    console.log(`[${headingCount}/${totalHeadings}] "${heading}" done. Inserted/Updated: ${toUpsert.length}`);
   }
 
-  // 🔥 DELETE STALE DOCS
   const toDelete = [...allExistingIds].filter(id => !usedIds.has(id));
   if (toDelete.length > 0) {
     await Promise.all(toDelete.map(id => collection.deleteOne({ _id: id })));
