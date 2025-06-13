@@ -151,9 +151,9 @@ const loadSampleData = async ({ wipe = false } = {}) => {
   const toDelete = [...allExistingIds].filter(id => !usedIds.has(id));
   if (toDelete.length > 0) {
     await Promise.all(toDelete.map(id => collection.deleteOne({ _id: id })));
-    console.log(`🗑️ Removed ${toDelete.length} obsolete documents.`);
+    console.log(`Removed ${toDelete.length} obsolete documents.`);
   } else {
-    console.log(`✅ No obsolete documents to delete.`);
+    console.log(`No obsolete documents to delete.`);
   }
 
   console.log(`✅ Data load complete. Skipped: ${skipped}, Inserted/Updated: ${inserted}`);
