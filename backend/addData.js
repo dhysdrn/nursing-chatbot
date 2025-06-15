@@ -1,3 +1,11 @@
+/**
+ * @description
+ * Provides functions to insert data into Astra DB collections for admin and user management.
+ * Adds vector-embedded admin content into the admin collection.
+ * Adds new users with bcrypt-hashed passwords into the user collection.
+ * Connects to Astra DB and OpenAI using environment variables.
+ * @version 1.0
+ */
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import OpenAI from "openai";
 import "dotenv/config";
@@ -21,7 +29,14 @@ const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
 const db = client.db(ASTRA_DB_API_ENDPOINT, { namespace: ASTRA_DB_NAMESPACE });
 
 
-// Function to add admin data into the admin collection
+/**
+ * @function addData
+ * @description Generates embeddings for the provided content and inserts it into the admin collection with the heading and text. Adds admin data into the admin collection
+ * 
+ * @param {string} heading - The heading or title associated with the content.
+ * @param {string} content - The text content to embed and store.
+ * @returns {Promise<void>}
+ */
 const addData = async (heading, content) => {
   try {
     // Generate embeddings for the content using OpenAI
@@ -47,6 +62,15 @@ const addData = async (heading, content) => {
   }
 };
 
+
+/**
+ * @function addUser
+ * @description Adds a new user to the users collection with the username and bcrypt-hashed password.
+ * 
+ * @param {string} username - The username for the new user.
+ * @param {string} password - The plaintext password for the new user.
+ * @returns {Promise<void>}
+ */
 const addUser = async (username, password) => {
   try {
     // Insert data into the user collection

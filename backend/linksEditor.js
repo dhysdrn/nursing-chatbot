@@ -1,3 +1,10 @@
+/**
+ * @description
+ * Express router module for managing nursing-related links stored in a text file.
+ * Supports reading all links, adding new links, and deleting existing links.
+ * Links are stored line-by-line in `db/linksfornursing.txt`.
+ * @version 1.0
+ */
 import express from "express";
 import fs from "fs";
 import path from "path";
@@ -9,13 +16,28 @@ const __dirname = path.dirname(__filename);
 
 const linksPath = path.join(__dirname, "db", "linksfornursing.txt");
 
+/**
+ * @function readLinks
+ * @description
+ * Reads the nursing links text file, splits it by lines,
+ * trims whitespace, and filters out empty lines.
+ *
+ * @returns {string[]} Array of link strings.
+ */
 const readLinks = () =>
   fs.readFileSync(linksPath, "utf-8")
     .split(/\r?\n/)
     .map(line => line.trim())
     .filter(Boolean);
 
-// GET all links
+/**
+ * @route GET ALL /links
+ * @description
+ * Retrieves all nursing links from the text file.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 router.get("/links", (req, res) => {
   try {
     const links = readLinks();
@@ -25,7 +47,15 @@ router.get("/links", (req, res) => {
   }
 });
 
-// POST new link
+
+/**
+ * @route POST new /links
+ * @description
+ * Adds a new nursing link to the text file if it doesn't already exist.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 router.post("/links", (req, res) => {
   const { link } = req.body;
   if (!link) return res.status(400).json({ message: "No link provided." });
@@ -42,7 +72,15 @@ router.post("/links", (req, res) => {
   }
 });
 
-// DELETE link
+
+/**
+ * @route DELETE /links
+ * @description
+ * Removes the specified nursing link from the text file if it exists.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 router.delete("/links", (req, res) => {
   const { link } = req.body;
   if (!link) return res.status(400).json({ message: "No link provided." });

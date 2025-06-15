@@ -1,7 +1,16 @@
+/**
+ * @description
+ * This component renders a form for user input in a chat interface. It handles
+ * submission of user messages, updates the chat history state, and triggers
+ * generation of bot responses with a "Thinking..." animation.
+ * @version 1.0
+ */
 import { useRef } from "react";
 
 /**
+ * @description
  * ChatForm component for handling user input and updating chat history.
+ * 
  * @param {Object} props - Component props.
  * @param {Array} props.chatHistory - The current chat history.
  * @param {Function} props.setChatHistory - Function to update chat history.
@@ -13,7 +22,9 @@ const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
 
     /**
      * Handles form submission by sending user input to chat history and triggering bot response.
-     * @param {Event} e - The form submit event.
+     * Adds a "Thinking..." message with animated dots while waiting for the response.
+     * 
+     * @param {React.FormEvent<HTMLFormElement>} e - The form submit event.
      */
     const handleFormSubmit = (e) => {
         e.preventDefault();

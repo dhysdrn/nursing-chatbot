@@ -1,3 +1,12 @@
+/**
+ * @description
+ * This module provides functions to scrape nursing program data from specified urls. 
+ * It handles scraping HTML pages and extracting text from linked PDFs.
+ * It uses axios for HTTP requests, cheerio for HTML parsing, and pdf-parse for PDF text extraction.
+ * The scraper supports reading additional URLs from a text file, categorizing URLs by type,
+ * and displays progress bars during scraping. It aggregates and returns the extracted data.
+ * @version 1.0
+ */
 import axios from "axios";
 import * as cheerio from "cheerio";
 import pdfParse from "pdf-parse/lib/pdf-parse.js";
@@ -12,8 +21,14 @@ const __dirname = path.dirname(__filename);
 
 
 /**
- * Main function to scrape nursing data (handles both HTML pages and PDF URLs).
- * @returns {Promise<Object|null>} Scraped data or null on failure.
+ * @function scrapeData
+ * @description
+ * Main function to scrape nursing data from the Green River College nursing program website.
+ * It loads the main page, additional URLs from a text file, and scrapes both HTML pages and PDF documents.
+ * It consolidates the extracted headings and text content into an object.
+ * Includes console logs for progress and error handling.
+ * 
+ * @returns {Promise<Object|null>} An object containing the scraped nursing data keyed by headings, or null on failure.
  */
 export async function scrapeData() {
   try {
@@ -96,9 +111,15 @@ export async function scrapeData() {
 }
 
 /**
- * Fetches a page, extracts headings, text, and PDFs linked within.
- * @param {string} pageUrl
- * @returns {Promise<Object>} Extracted key-value pairs.
+ * @function fetchAndParsePage
+ * @description
+ * Fetches an HTML page at the given URL and extracts structured data.
+ * Specifically, it extracts the page title and concatenates text content
+ * under h2, h3, and h4 headings. The extracted data is keyed by
+ * "Page Title - Heading".
+ * 
+ * @param {string} pageUrl - The full URL of the page to scrape.
+ * @returns {Promise<Object>} A key-value object of extracted headings and content.
  */
 async function fetchAndParsePage(pageUrl) {
   const result = {};
@@ -128,9 +149,13 @@ async function fetchAndParsePage(pageUrl) {
 }
 
 /**
- * Downloads and extracts text from a PDF URL.
- * @param {string} pdfUrl
- * @returns {Promise<string>} Extracted text or empty string.
+ * @function extractPdfText
+ * @description
+ * Downloads a PDF file from the provided URL and extracts its text content.
+ * Uses axios to fetch the PDF as an arraybuffer and pdf-parse to extract text.
+ * 
+ * @param {string} pdfUrl - The full URL of the PDF to download and parse.
+ * @returns {Promise<string>} The extracted text content of the PDF or an empty string on failure.
  */
 async function extractPdfText(pdfUrl) {
   try {

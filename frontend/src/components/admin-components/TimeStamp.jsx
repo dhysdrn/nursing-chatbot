@@ -1,10 +1,23 @@
-
+/**
+ * @description
+ * TimeStamp component fetches and displays the "last scraped" timestamp from the backend.
+ * It shows a relative time (e.g., "3 hours ago") and the formatted absolute date/time.
+ * Handles error states when fetching fails or no database is connected.
+ * @version 1.0
+ */
 import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import axios from "axios";
 
-
+/**
+ * @function TimeStamp
+ * @description
+ * Fetches the last scraped timestamp from an API endpoint and displays it in relative and formatted form.
+ * Shows loading and error messages appropriately.
+ * 
+ * @returns {JSX.Element} The TimeStamp component.
+ */
 const TimeStamp = () => {
   const [lastScraped, setLastScraped] = useState(null);
   const [error, setError] = useState(null);
