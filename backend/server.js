@@ -12,11 +12,11 @@ import OpenAI from "openai/index.mjs";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { ASTRA_DB_COLLECTION_USERS, ASTRA_DB_NAMESPACE, ASTRA_DB_COLLECTION, ASTRA_DB_COLLECTION_ADMIN, ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN, AI_API_KEY } from './connection.js';
 import { addData, addUser } from './addData.js';
-import { checkUser } from './checkUser.js';
+import { checkUser, checkEmail } from './checkUser.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cron from 'node-cron';
-import { loadSampleData, createCollection } from './loadDb.js';
+import { loadSampleData, createCollection, createUserCollection } from './loadDb.js';
 import rateLimit from "express-rate-limit";
 import linksRoutes from './linksEditor.js';
 
@@ -395,7 +395,7 @@ app.get("/last-scraped", async (req, res) => {
  * @param {import('express').Response} res
  */
 app.post("/create-user", async (req, res) => {
-  const { username, password, password2 } = req.body;
+  const { username, password, password2, email } = req.body;
 
   // Basic Authentication
   if (password != password2) {
@@ -403,16 +403,23 @@ app.post("/create-user", async (req, res) => {
   }
   else if (!username || !password || !password2) {
     return res.json({ message: "Both username and both passwords are required." });
+  } 
+  else if (!email) {
+    return res.json({ message: "Email is required." });
   }
 
   // Check if the user already exists
   const user = await checkUser(username);
-  if (user) {
+  const existingEmail = await checkEmail(email);
+  if (user || existingEmail) {
     return res.json({ message: "User already exists." });
   }
 
   try {
-    await addUser(username, password);
+    // Attempts to create the user collection if it doesn't exist
+    await createUserCollection(ASTRA_DB_COLLECTION_USERS);
+    // Add the new user to the database
+    await addUser(username, email, password);
     return res.status(201).json({ message: "User added successfully!" });
   } catch (error) {
     console.error("Error checking data:", error);
@@ -434,13 +441,35 @@ app.post("/user-login", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.json({ message: "Both username and password are required." });
+    return res.json({ message: "Both username/email and password are required." });
   }
   try {
     const user = await checkUser(username);
     //console.log(user);
     if (!user) {
-      return res.json({ message: 'User or password is wrong.' });
+      const emailUser = await checkEmail(username);
+      if (!emailUser) {
+        return res.json({ message: 'User or password is wrong.' });
+      } else {
+        // Check if password exists
+        let passwordMatched;
+        try {
+        passwordMatched = await bcrypt.compare(password, emailUser["password"]);
+        } catch (error) {
+            console.error("User doesn't exist", error);
+            return res.json({ message: 'User or password is wrong.' });
+        }
+        //console.log(passwordMatched);
+        // Check if password matches
+        if (passwordMatched) {
+          const token = jwt.sign({ userId: emailUser["_id"] }, 'your-secret-key', {
+            expiresIn: '1h',
+            });
+          return res.status(201).json({ message: "Data successfully matched!", token });
+        } else {
+          return res.json({ message: 'User or password is wrong.' });
+        }
+      }
     } else {
       // Check if password exists
       let passwordMatched;
@@ -471,7 +500,7 @@ app.post("/user-login", async (req, res) => {
 /**
  * @route POST new /db-checks
  * @description
- * Checks if the users collection exists in Astra DB.
+ * Checks if the users collection exists and has users in Astra DB
  * Returns status 200 if exists, 202 if not, and 500 on error.
  *
  * @param {import('express').Request} req
@@ -479,12 +508,14 @@ app.post("/user-login", async (req, res) => {
  */
 app.post("/db-check", async (req, res) => {
   try { 
-    // Check if the usertable exists 
+    // Check if the usertable has users 
     const collection = await db.collection(ASTRA_DB_COLLECTION_USERS);
     try {
       const cursor = await collection.findOne()
+      //console.log("Exists")
       res.status(200).json({ message: "User table checked successfully. (Exists)"});
     } catch (no_exist) {
+      //console.log("Doesn't exist")
       res.status(202).json({ message: "User table checked successfully. (Doesn't exist)"});
     }
   } catch (err) {

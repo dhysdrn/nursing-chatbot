@@ -13,7 +13,6 @@ const pageTitles = {
   "/admin": "Home",
   "/admin/form/input": "FAQ Entry",
   "/admin/form/links": "Manage Links",
-  "/admin/form/create-user": "Create User",
 };
 
 /**

@@ -22,7 +22,7 @@ import GreenRiverIcon from "../GreenRiverIcon";
  */
 export default function NavBar() {
   if (!localStorage.token) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return (
@@ -70,14 +70,6 @@ export default function NavBar() {
               }
             >
               Manage Links
-            </NavLink>
-            <NavLink
-              to="/admin/form/create-user"
-              className={({ isActive }) =>
-                isActive ? "navbar-sublink navbar-sublink-active" : "navbar-sublink"
-              }
-            >
-              Create User
             </NavLink>
           </div>
         </nav>

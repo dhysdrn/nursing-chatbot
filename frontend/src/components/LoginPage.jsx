@@ -101,7 +101,7 @@ const LoginPage = () => {
 
   return (
    <div className="create-user-container">
-      <h2>Login</h2>
+      <h2>Admin Login</h2>
 
       {message && (
         <div className="alert">
@@ -114,7 +114,7 @@ const LoginPage = () => {
           <input
             id="username"
             type="text"
-            placeholder="Username"
+            placeholder="Username or Email"
             value={username}
             onChange={(e) => setUser(e.target.value)}
             required
@@ -136,6 +136,15 @@ const LoginPage = () => {
           Submit
         </button>
       </form>
+      
+      <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+          Back to Chatbot?{" "}
+          <Link to="/">
+            <button className="submit-button" style={{ padding: "0.4rem 1rem", fontSize: "0.9rem" }}>
+              Chatbot
+            </button>
+          </Link>
+      </div>
 
       {firstTime && (
         <div style={{ marginTop: "1.5rem", textAlign: "center" }}>

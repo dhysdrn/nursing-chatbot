@@ -65,13 +65,14 @@ const addData = async (heading, content) => {
 
 /**
  * @function addUser
- * @description Adds a new user to the users collection with the username and bcrypt-hashed password.
+ * @description Adds a new user to the users collection with the username, email, and bcrypt-hashed password.
  * 
  * @param {string} username - The username for the new user.
+ * @param {string} email - The email for the new user.
  * @param {string} password - The plaintext password for the new user.
  * @returns {Promise<void>}
  */
-const addUser = async (username, password) => {
+const addUser = async (username, email, password) => {
   try {
     // Insert data into the user collection
     const collection = await db.collection(ASTRA_DB_COLLECTION_USERS);
@@ -82,6 +83,7 @@ const addUser = async (username, password) => {
 
     const res = await collection.insertOne({
       username,
+      email,
       password: hashedPassword,
     });
 

@@ -21,6 +21,7 @@ import { Link, Navigate } from "react-router-dom";
  */
 const SignupPage = () => {
   const [username, setUser] = useState("");
+  let [email, setEmail] = useState("");
   const [password, setPass] = useState("");
   const [password2, setPass2] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
@@ -42,6 +43,11 @@ const SignupPage = () => {
       const dbResponse = await axios.post(dbFetchURL);
       if (dbResponse.status == 202) {
         setFirstTime(true);
+        setTimeout(function (){
+          //axios.post(userCreateURL);
+        // Something you want delayed.
+                  
+        }, 5000);
       } else {
         setFirstTime(false);
       }
@@ -57,6 +63,9 @@ const SignupPage = () => {
     if (firstTime == false) {
       return <Navigate to="/admin" />
     }
+  } else {
+    // User is already logged in, redirect to /admin
+    return <Navigate to="/admin" />
   }
 
   
@@ -71,8 +80,10 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    email = "nursing@greenriver.edu";
+
     // Checks if user and passwords are provided
-    if (!username || !password || !password2) {
+    if (!username || !password || !password2 || !email) {
       setResponseMessage("Please provide the username and passwords.");
       return;
     }
@@ -83,7 +94,8 @@ const SignupPage = () => {
       const response = await axios.post(fetchURL, {
         username,
         password, 
-        password2
+        password2,
+        email
       });
     
       // Display the message returned from the backend
@@ -96,7 +108,7 @@ const SignupPage = () => {
 
     } catch (error) {
       console.error("Error creating user:", error);
-      setResponseMessage(`Error creating user. Please try again. ${error}`);
+      setResponseMessage(`Error creating user. Please try again.`);
     }
   };
 
@@ -129,6 +141,18 @@ const SignupPage = () => {
 
         <div className="form-group">
           <input
+            id="email"
+            type="text"
+            placeholder="Email@email.email"
+            value="nursing@greenriver.edu"
+            onChange={(e) => setEmail(e.target.value)}
+            readOnly="readOnly"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <input
             id="password"
             type="password"
             placeholder="Password"
@@ -154,7 +178,7 @@ const SignupPage = () => {
 
       {firstTime && (
         <div className="login-redirect">
-          Already have a user? <Link to="/login"><button className="login-button">Login Page</button></Link>
+          Back to login? <Link to="/login"><button className="login-button">Login Page</button></Link>
         </div>
       )}
     </div>
