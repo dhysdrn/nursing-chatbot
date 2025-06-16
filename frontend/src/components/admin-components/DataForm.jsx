@@ -1,7 +1,24 @@
+/**
+ * @description
+ * DataForm component provides a controlled form interface for submitting new FAQ entries
+ * to the nursing chatbot database. It validates input fields, enforces a minimum content length,
+ * and handles form submission via a POST request to the backend API.
+ * Success and error messages are displayed based on the server response.
+ * The component also includes user guidance on the form usage and data requirements.
+ * @version 1.0
+ */
 import { useState } from "react";
 import axios from "axios";
 import { Plus } from 'lucide-react';
 
+/**
+ * @function DataForm
+ * @description
+ * Renders a form allowing admins to add new FAQ entries.
+ * Manages form state, input validation, and submission with feedback.
+ *
+ * @returns {JSX.Element} The data entry form component.
+ */
 const DataForm = () => {
   const [category, setCategory] = useState("");
   const [text, setText] = useState("");
@@ -13,6 +30,16 @@ const DataForm = () => {
   const minLength = 50;
   const isFormValid = category.trim() && text.trim().length >= minLength;
 
+    /**
+   * @function handleSubmit
+   * @description
+   * Handles form submission event, validates inputs,
+   * sends POST request to backend with category and content,
+   * and sets success or error messages accordingly.
+   *
+   * @param {React.FormEvent} e - Form submission event.
+   * @returns {Promise<void>}
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 

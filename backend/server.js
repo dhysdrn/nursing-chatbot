@@ -1,3 +1,11 @@
+/**
+ * @description
+ * Express.js backend server for Green River College Nursing AI assistant.
+ * This server connects to Astra DB collections and integrates OpenAI API for retrieval-augmented generation (RAG).
+ * It provides endpoints to ask questions, manage admin content, handle user authentication, and manage users.
+ * It also includes scheduled monthly reload of nursing data and rate limiting for sensitive endpoints.
+ * @version 1.0
+ */
 import express from "express";
 import cors from "cors";
 import OpenAI from "openai/index.mjs";
@@ -30,11 +38,16 @@ const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
 const db = client.db(ASTRA_DB_API_ENDPOINT, { namespace: ASTRA_DB_NAMESPACE });
 
 
+
 /**
+ * Generates an AI response based on a user question and conversation history using RAG 
+ * (retrieval-augmented generation).
+ * Fetches relevant documents from Astra DB vector collections and passes them as context 
+ * to OpenAI's chat completion API.
  * 
- * @param {string} userQuestion 
- * @param {object, object} history
- * @returns 
+ * @param {string} userQuestion The question asked by the user.
+ * @param {Array<object>} history Conversation history to provide context to the AI.
+ * @returns {Promise<string>} The AI-generated response string.
  */
 const rag = async (userQuestion, history) => {
   console.log("Attempting AI response...");
@@ -108,10 +121,7 @@ const rag = async (userQuestion, history) => {
       newHistory.push(history[i]);
     }
 
-  
-  //TODO: Add previous messages and questions asked before. 
 
-  //const aiResponse = "";
   //This uses credits, be careful when sending prompts to the AI
   let aiResponse = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -122,18 +132,16 @@ const rag = async (userQuestion, history) => {
   //Extracts the text from the AI response
   aiResponse = aiResponse.choices[0].message.content.trim();
 
-  //TODO: Add stream to make the text load as the user is getting the response.
-  // const stream = OpenAIStream(response);
-  // return new StreamingTextResponse(stream);
   return aiResponse;
 }
 
 
 /**
- * Removes the filler information the AI gives us.
+ * Removes code block markers and filler content from AI responses.
+ * Specifically strips out leading/trailing markdown code fences and any extraneous formatting.
  * 
- * @param {string} answer 
- * @returns 
+ * @param {string} answer Raw AI response string.
+ * @returns {string} Cleaned answer string without filler.
  */
 const removeFiller = (answer) => {
   if (answer.charAt(0)== '`') {
@@ -156,7 +164,12 @@ const limiter = rateLimit({
 
 
 /**
+ * @route POST new /ask
+ * @description
  * Handles incoming user questions and provides responses based on cached nursing data.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
  */
 app.post("/ask", async (req, res) => {
   const userQuestion = req.body.question || "";
@@ -173,8 +186,14 @@ app.post("/ask", async (req, res) => {
   res.json({ response: answer });
 });
 
+
 /**
+ * @route GET new /documents
+ * @description
  * Endpoint to fetch documents from Astra DB for the frontend to display in a table
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
  */
 app.get("/documents", async (req, res) => {
   try {
@@ -191,6 +210,13 @@ app.get("/documents", async (req, res) => {
   }
 });
 
+
+/**
+ * Sanitizes input string by removing script tags, HTML tags, and URLs.
+ * 
+ * @param {string} str Input string to sanitize.
+ * @returns {string} Sanitized string.
+ */
 const sanitizeInput = (str) => {
   return str
     .replace(/<script.*?>.*?<\/script>/gi, "") // remove script tags
@@ -198,6 +224,13 @@ const sanitizeInput = (str) => {
     .replace(/https?:\/\/[^\s]+/g, "") // strip URLs
     .trim();
 };
+
+/**
+ * Checks if the input text has more than 20% special characters/symbols.
+ * 
+ * @param {string} text Input text to check.
+ * @returns {boolean} True if special characters exceed 20%, false otherwise.
+ */
 const hasTooManySpecialChars = (text) => {
   // This checks if more than 30% of the content is symbols like $%^&*#@!
   const symbols = text.match(/[^a-zA-Z0-9\s]/g);
@@ -206,6 +239,15 @@ const hasTooManySpecialChars = (text) => {
 
 const MAX_LENGTH = 1500;
 
+/**
+ * @route POST new /admin-data
+ * @description
+ * Adds new admin data (heading and content) to the Astra DB admin collection.
+ * Validates input, sanitizes it, applies rate limiting, and returns success or error responses.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.post("/admin-data", limiter, async (req, res) => {
   let { heading, content } = req.body;
 
@@ -255,7 +297,14 @@ app.post("/admin-data", limiter, async (req, res) => {
 }
 });
 
-// Update an existing document by _id
+/**
+ * @route PUT new /admin-data
+ * @description
+ * Update an existing document by _id
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.put("/admin-data/:id", async (req, res) => {
   const { id } = req.params;
   const { heading, content } = req.body;
@@ -283,7 +332,15 @@ app.put("/admin-data/:id", async (req, res) => {
   }
 });
 
-// Delete a document by _id
+
+/**
+ * @route DELETE /admin-data
+ * @description
+ * Deletes an admin document from Astra DB by its ID.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.delete("/admin-data/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -302,6 +359,15 @@ app.delete("/admin-data/:id", async (req, res) => {
   }
 });
 
+
+/**
+ * @route GET ALL /last-scraped
+ * @description
+ * Retrieves the last timestamp when nursing data was scraped and saved in Astra DB.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.get("/last-scraped", async (req, res) => {
   try {
     const collection = db.collection(ASTRA_DB_COLLECTION);
@@ -318,6 +384,16 @@ app.get("/last-scraped", async (req, res) => {
   }
 });
 
+
+/**
+ * @route POST new /create-user
+ * @description
+ * Creates a new user account with username and password.
+ * Validates input, checks for existing user, hashes password, and adds user to Astra DB.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.post("/create-user", async (req, res) => {
   const { username, password, password2 } = req.body;
 
@@ -344,6 +420,16 @@ app.post("/create-user", async (req, res) => {
   }
 });
 
+
+/**
+ * @route POST new /user-login
+ * @description
+ * Authenticates a user by username and password.
+ * Returns a JWT token if successful.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.post("/user-login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -382,6 +468,15 @@ app.post("/user-login", async (req, res) => {
   }
 });
 
+/**
+ * @route POST new /db-checks
+ * @description
+ * Checks if the users collection exists in Astra DB.
+ * Returns status 200 if exists, 202 if not, and 500 on error.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.post("/db-check", async (req, res) => {
   try { 
     // Check if the usertable exists 
@@ -398,7 +493,15 @@ app.post("/db-check", async (req, res) => {
   }
 });
 
-// Get all users (for AdminTable)
+
+/**
+ * @route GET ALL /users
+ * @description
+ * Returns all user documents from the users collection for admin viewing.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.get("/users", async (req, res) => {
   try {
     const collection = await db.collection(ASTRA_DB_COLLECTION_USERS);
@@ -410,7 +513,16 @@ app.get("/users", async (req, res) => {
   }
 });
 
-// Update a user by ID
+
+/**
+ * @route POST new /users
+ * @description
+ * Updates a user document in Astra DB by user ID.
+ * Requires username and password in request body.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.put("/users/:id", async (req, res) => {
   const { id } = req.params;
   const { username, password } = req.body;
@@ -437,7 +549,15 @@ app.put("/users/:id", async (req, res) => {
   }
 });
 
-// Delete a user by ID
+
+/**
+ * @route DELETE /users
+ * @description
+ * Deletes a user document by ID.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.delete("/users/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -457,6 +577,15 @@ app.delete("/users/:id", async (req, res) => {
 });
 
 
+/**
+ * @route POST new /reload-data
+ * @description
+ * Reloads the nursing data by recreating the collection and loading sample data.
+ * Intended for manual refresh of the data store.
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 app.post("/reload-data", async (req, res) => {
   try {
     await createCollection(ASTRA_DB_COLLECTION);

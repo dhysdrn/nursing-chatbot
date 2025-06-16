@@ -1,3 +1,11 @@
+/**
+ * @description
+ * Chatbot page for the Green River College Nursing Advising system.
+ * Handles user input, displays chat history, and manages interaction with the backend for bot responses.
+ * Includes UI elements like header, chat window, footer, theme toggle, and admin access.
+ * @version 1.0
+ */
+
 import { useEffect, useState, useRef } from "react";
 import ChatForm from "../components/ChatForm";
 import GreenRiverIcon from "../components/GreenRiverIcon";
@@ -7,8 +15,11 @@ import AdminButton from "../components/AdminButton";
 
 
 /**
+ * @function ChatbotPage
+ * @description
  * Main application component for the Advising Chatbot.
  * Handles user interactions and displays chat history.
+ *
  * @returns {JSX.Element} The rendered application component.
  */
 const ChatbotPage = () => {
@@ -18,8 +29,12 @@ const ChatbotPage = () => {
   fetchURL = fetchURL + "/ask";
 
   /**
-   * Sends the latest user message to the server and updates chat history with the bot's response.
-   * @param {Array} history - The current chat history.
+   * @function generateBotResponse
+   * @description
+   * Sends the latest user message to the server and appends the bot's response to chat history.
+   *
+   * @param {Array} history - The current chat history, including the latest user message.
+   * @returns {Promise<void>}
    */
   const generateBotResponse = async (history) => {
     const lastMessage = history[history.length - 1];
@@ -42,8 +57,11 @@ const ChatbotPage = () => {
     }
   };  
 
+
   /**
-   * Scrolls the chat window to the latest message whenever the chat history updates.
+   * @function useEffect
+   * @description
+   * Scrolls the chat window to the bottom when a new message is added to the chat history.
    */
   useEffect(() => {
     chatBodyRef.current.scrollTo({top: chatBodyRef.current.scrollHeight, behavior: "smooth"});

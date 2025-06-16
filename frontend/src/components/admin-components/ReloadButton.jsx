@@ -1,3 +1,11 @@
+/**
+ * @description
+ * ReloadButton component allows users to trigger a data reload process.
+ * It visually tracks progress across multiple predefined steps, showing elapsed time,
+ * current step message, and handles loading states with appropriate user feedback.
+ * The reload action triggers a POST request to a backend endpoint.
+ * @version 1.0
+ */
 import { useState, useRef } from "react";
 import { RotateCcw } from 'lucide-react';
 
@@ -13,6 +21,14 @@ const steps = [
 const TOTAL_TIME_SECONDS = 600; 
 const STEP_DURATION = Math.floor(TOTAL_TIME_SECONDS / steps.length); 
 
+/**
+ * @function ReloadButton
+ * @description
+ * Renders a clickable container that initiates the data reload process when clicked.
+ * Displays current reload status, progress steps, elapsed time, and messages.
+ *
+ * @returns {JSX.Element} The ReloadButton component.
+ */
 export default function ReloadButton() {
   const [reloadMsg, setReloadMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,6 +37,14 @@ export default function ReloadButton() {
 
   const fetchURL = import.meta.env.VITE_FETCH_URL + "/reload-data";
 
+  /**
+   * @function handleReload
+   * @description
+   * Starts the reload process by sending a POST request to the backend.
+   * Manages loading state, timer for progress indication, and updates messages.
+   *
+   * @returns {Promise<void>}
+   */
   const handleReload = async () => {
     if (loading) return; 
     setReloadMsg();
@@ -55,6 +79,14 @@ export default function ReloadButton() {
     steps.length - 1
   );
 
+  /**
+   * @function formatTime
+   * @description
+   * Converts a time duration in seconds to a formatted string MM:SS.
+   *
+   * @param {number} secs - Time in seconds.
+   * @returns {string} Formatted time string.
+   */
   const formatTime = (secs) => {
     const m = Math.floor(secs / 60)
       .toString()

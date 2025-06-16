@@ -1,7 +1,25 @@
+/**
+ * @description
+ * LoginPage component provides a user login form.
+ * It handles user authentication by sending credentials to the backend,
+ * manages login state and redirects authenticated users to the admin page.
+ * Also checks if the database is empty to prompt first-time user signup.
+ * @version 1.0
+ */
 import { useState } from "react";
 import axios from "axios";
 import { Link, Navigate } from "react-router-dom";
 
+/**
+ * @function LoginPage
+ * @description
+ * Renders the login form, manages form input state, submits credentials
+ * to the backend, and handles login success or failure messages.
+ * Redirects logged-in users to the admin dashboard.
+ * Checks if the backend database is empty and prompts for first user signup.
+ *
+ * @returns {JSX.Element} The rendered login page component.
+ */
 const LoginPage = () => {
   const [username, setUser] = useState("");
   const [password, setPass] = useState("");
@@ -15,6 +33,13 @@ const LoginPage = () => {
   // Remove the state given from /signup route
   localStorage.removeItem("signedup")
 
+
+  /**
+   * @function checkDB
+   * @description
+   * Checks with the backend whether the database is empty (first-time use).
+   * Sets the firstTime state to true if the backend indicates the database is empty.
+   */
   const checkDB = async () => {
     try {
       const dbResponse = await axios.post(dbFetchURL);
@@ -29,6 +54,14 @@ const LoginPage = () => {
   
   checkDB();
 
+  /**
+   * @function handleSubmit
+   * @param {React.FormEvent<HTMLFormElement>} e
+   * @description
+   * Handles form submission for login.
+   * Validates input fields, sends login request to backend,
+   * sets messages for success or error, and stores token on success.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 

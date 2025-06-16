@@ -1,6 +1,21 @@
+/**
+ * @description
+ * ThemeToggle component allows users to switch between light and dark modes.
+ * It respects the user's saved preference from localStorage or system settings
+ * on initial load, and toggles the 'dark' class on the document root accordingly.
+ * @version 1.0
+ */
 import { useState, useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
 
+/**
+ * @function ThemeToggle
+ * @description
+ * Renders a button that toggles the application theme between light and dark modes.
+ * Persists the user's preference in localStorage and updates the document class.
+ *
+ * @returns {JSX.Element} A button component that toggles theme and displays an icon.
+ */
 const ThemeToggle = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -18,6 +33,12 @@ const ThemeToggle = () => {
     }
   }, []);
 
+  /**
+   * @function toggleTheme
+   * @description
+   * Toggles the theme state between dark and light modes,
+   * updates the document's classList, and saves preference in localStorage.
+   */
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     

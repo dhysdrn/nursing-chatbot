@@ -1,3 +1,15 @@
+/**
+ * @description
+ * This module handles integration with Astra DB and OpenAI to load
+ * nursing data scraped from a website into a vector-enabled Astra DB collection.
+ * It creates necessary collections, splits text data into chunks,
+ * generates embeddings for each chunk, and updates the database accordingly.
+ * Obsolete entries are deleted, and metadata is tracked.
+ * 
+ * It also manages user collection creation separately and uses concurrency
+ * control and progress bars for smooth operation.
+ * @version 1.0
+ */
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import OpenAI from "openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
@@ -24,8 +36,26 @@ const splitter = new RecursiveCharacterTextSplitter({
   chunkOverlap: 100,
 });
 
+/**
+ * @function hashText
+ * @description
+ * Generates a SHA-256 hash for the given text input.
+ * Used to detect changes and avoid redundant embedding operations.
+ *
+ * @param {string} text - The input text to hash.
+ * @returns {string} The resulting hex hash string.
+ */
 const hashText = (text) => crypto.createHash("sha256").update(text).digest("hex");
 
+/**
+ * @function createUserCollection
+ * @description
+ * Checks if a user collection exists in Astra DB and creates it if missing.
+ * Logs status to the console.
+ *
+ * @param {string} collectionName - The name of the user collection to create.
+ * @returns {Promise<void>}
+ */
 const createUserCollection = async (collectionName) => {
   const collections = await db.listCollections();
   const exists = collections.find((c) => c.name === collectionName);
@@ -37,6 +67,16 @@ const createUserCollection = async (collectionName) => {
   }
 };
 
+/**
+ * @function createCollection
+ * @description
+ * Checks if a vector collection exists in Astra DB and creates it if missing.
+ * The vector collection is configured with dimension 1536 and dot product metric.
+ * Logs status to the console.
+ *
+ * @param {string} collectionName - The name of the vector collection to create.
+ * @returns {Promise<void>}
+ */
 const createCollection = async (collectionName) => {
   const collections = await db.listCollections();
   const exists = collections.find((c) => c.name === collectionName);
@@ -53,6 +93,21 @@ const createCollection = async (collectionName) => {
   }
 };
 
+
+/**
+ * @function loadSampleData
+ * @description
+ * Loads nursing data into the Astra DB vector collection.
+ * Optionally wipes the collection before loading.
+ * Scrapes fresh data, splits text into chunks, computes embeddings,
+ * and upserts documents with concurrency control and progress reporting.
+ * Skips unchanged chunks by hash comparison and deletes obsolete documents.
+ * Updates metadata document with last scrape timestamp.
+ *
+ * @param {Object} [options]
+ * @param {boolean} [options.wipe=false] - Whether to delete all existing documents before loading.
+ * @returns {Promise<void>}
+ */
 const loadSampleData = async ({ wipe = false } = {}) => {
   const collection = await db.collection(ASTRA_DB_COLLECTION);
   if (wipe) {

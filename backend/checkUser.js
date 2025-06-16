@@ -1,3 +1,10 @@
+/**
+ * @description
+ * Handles user authentication-related database operations.
+ * Provides a function to check if a user exists in the Astra DB users collection.
+ * Connects to Astra DB using provided environment variables and uses OpenAI client setup.
+ * @version 1.0
+ */
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import OpenAI from "openai";
 import bcrypt from 'bcrypt';
@@ -10,6 +17,16 @@ const openai = new OpenAI({ apiKey: AI_API_KEY });
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
 const db = client.db(ASTRA_DB_API_ENDPOINT, { namespace: ASTRA_DB_NAMESPACE });
 
+
+/**
+ * @function checkUser
+ * @description
+ * Queries the Astra DB users collection for a document matching the given username.
+ * Returns the user document if found, or null if no user exists or an error occurs.
+ *
+ * @param {string} username - The username to search for.
+ * @returns {Promise<Object|null>} The user object if found, otherwise null.
+ */
 const checkUser = async (username) => {
     try {
         // Check if the usertable exists 

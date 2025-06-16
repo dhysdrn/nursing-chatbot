@@ -1,8 +1,24 @@
+/**
+ * @description
+ * SignupPage component handles the user registration process for admin creation.
+ * It verifies backend DB status to redirect existing users,
+ * collects user credentials, and submits them to create a new admin account.
+ * Includes feedback messaging and redirects upon success.
+ * @version 1.0
+ */
 import { useState } from "react";
 import axios from "axios";
 import { Link, Navigate } from "react-router-dom";
 
-
+/**
+ * @function SignupPage
+ * @description
+ * Renders the signup form allowing creation of a new admin user.
+ * Checks if a user exists in the backend database and redirects accordingly.
+ * Handles form submission with validation and communicates with backend endpoints.
+ *
+ * @returns {JSX.Element} The SignupPage component with form and messaging.
+ */
 const SignupPage = () => {
   const [username, setUser] = useState("");
   const [password, setPass] = useState("");
@@ -14,6 +30,13 @@ const SignupPage = () => {
   const dbFetchURL = fetchURL + "/db-check";
   fetchURL = fetchURL + "/create-user";
 
+  /**
+   * @function checkDB
+   * @description
+   * Checks with the backend if the user database exists or not.
+   * Sets firstTime state to true if no users exist (new setup),
+   * false otherwise.
+   */
   const checkDB = async () => {
     try {
       const dbResponse = await axios.post(dbFetchURL);
@@ -28,15 +51,23 @@ const SignupPage = () => {
     }
   }
 
-  // Checks if the user is logged in
+  // If no token, check if this is the first time signup page visit
   if (!localStorage.token) {
     checkDB();
-    // Checks if it's the user's first time to the signup page
     if (firstTime == false) {
       return <Navigate to="/admin" />
     }
   }
 
+  
+ /**
+   * @function handleSubmit
+   * @param {React.FormEvent} e - Form submission event
+   * @description
+   * Handles the submission of the signup form.
+   * Validates input, sends user credentials to the backend,
+   * and sets response messages or localStorage flag on success.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 

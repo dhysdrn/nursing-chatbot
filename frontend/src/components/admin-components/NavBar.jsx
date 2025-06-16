@@ -1,8 +1,25 @@
+/**
+ * @description
+ * NavBar component renders the admin panel sidebar navigation.
+ * It conditionally redirects to the login page if no authentication token is found.
+ * Provides links for dashboard, chatbot, and various admin forms.
+ * Includes a logout button in the footer.
+ * @version 1.0
+ */
 import { NavLink, Outlet, Navigate } from "react-router-dom";
 import LogoutButton from "../../components/LogoutButton";
 import { House } from 'lucide-react';
 import GreenRiverIcon from "../GreenRiverIcon";
 
+
+/**
+ * @function NavBar
+ * @description
+ * Renders the sidebar navigation for the admin panel.
+ * Redirects unauthenticated users to the login page.
+ *
+ * @returns {JSX.Element} The NavBar component.
+ */
 export default function NavBar() {
   if (!localStorage.token) {
     return <Navigate to="/login" />;

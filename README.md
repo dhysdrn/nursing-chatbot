@@ -7,12 +7,11 @@ This should be a living document! If you encounter problems or missing instructi
 1. [About the Project](#about-the-project)
 2. [Local Development](#local-development-environment-setup)
 3. [Contributing to the Project](#contributing-to-the-project)
-4. [Style Guide](#style-guide)
 5. [Documentation](#documentation)
 
 ## About the Project
 
-This repository holds the code written by the team Thee AIdvisors (Noah Lanctot, Lois Lanctot, Dhiyaa Nazim, Mason Sain, Abdul Rauoof) for Green River College's course SDEV 485 (Software Development Capstone 1) for Winter 2025.
+This repository holds the code written by the team Thee AIdvisors (Noah Lanctot, Lois Lanctot, Dhiyaa Nazim, Mason Sain, Abdul Rauoof) for Green River College's course SDEV 485 and 486 (Software Development Capstone 1 and 2) for Winter and Spring 2025.
 
 **Tech stack**:
 
@@ -22,8 +21,22 @@ This repository holds the code written by the team Thee AIdvisors (Noah Lanctot,
   - [dotenv](https://www.npmjs.com/package/dotenv): Load environment variables
   - [cors](https://www.npmjs.com/package/cors): Provides middleware
   - [node-nlp](https://www.npmjs.com/package/node-nlp): Provides translation from user text to responses
+  - [Axios](https://www.npmjs.com/package/axios): Handles HTTP requests between the frontend and backend 
+  - [OpenAI](https://www.npmjs.com/package/openai): Language model
+  - [Cheerio](https://www.npmjs.com/package/cheerio): Parses and extracts content from HTML pages 
+  - [pdf-parse](https://www.npmjs.com/package/pdf-parse): Extracts text content from PDF files 
+  - [DataStax (Astra DB)](https://docs.datastax.com/en/astra-db-classic/index.html): Vector + document DB.
+  - [fs (File System)](https://nodejs.org/api/fs.html#file-system) Reads and writes local files
+  - [p-limit](https://www.npmjs.com/package/p-limit) Controls concurrency 
+  - [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) Limits how frequently users can make requests 
+  - [bcrypt](https://www.npmjs.com/package/bcrypt) Hashes passwords 
+  - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) Generates and verifies authentication tokens 
+  - [node-cron](https://www.npmjs.com/package/node-cron) Schedules automated scraping tasks 
+  - [langchain/text_splitter](https://www.npmjs.com/package/langchain) Splits large chunks of scraped text into manageable segments 
 - [React.js](https://react.dev/): Frontend (UI components, JS, HTML, CSS)
   - [Vite](https://vite.dev/): frontend build tool
+
+  
 
 ## Local Development Environment Setup
 
@@ -80,10 +93,6 @@ git push origin your-branch-name
 - Test your changes before submitting a pull request.
 - Practice submitting pull requests and avoid committing directly to the main branch to prevent conflicts.
 
-## Style Guide
-
-This section is to ensure consistency when adding code to the project.
-** TBD BY TEAM **
 
 ## Documentation
 ### Project Structure
@@ -94,11 +103,4 @@ thee-aidvisors/
 │-- frontend/   # React Vite frontend
 │-- README.md   # Project documentation
 ```
-### Code Formatting
 
-- Documentation
-- Variable naming
-- Function naming
-
-### API Endpoints
-(Include any relevant API endpoints here if applicable.)
