@@ -441,13 +441,35 @@ app.post("/user-login", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.json({ message: "Both username and password are required." });
+    return res.json({ message: "Both username/email and password are required." });
   }
   try {
     const user = await checkUser(username);
     //console.log(user);
     if (!user) {
-      return res.json({ message: 'User or password is wrong.' });
+      const emailUser = await checkEmail(username);
+      if (!emailUser) {
+        return res.json({ message: 'User or password is wrong.' });
+      } else {
+        // Check if password exists
+        let passwordMatched;
+        try {
+        passwordMatched = await bcrypt.compare(password, emailUser["password"]);
+        } catch (error) {
+            console.error("User doesn't exist", error);
+            return res.json({ message: 'User or password is wrong.' });
+        }
+        //console.log(passwordMatched);
+        // Check if password matches
+        if (passwordMatched) {
+          const token = jwt.sign({ userId: emailUser["_id"] }, 'your-secret-key', {
+            expiresIn: '1h',
+            });
+          return res.status(201).json({ message: "Data successfully matched!", token });
+        } else {
+          return res.json({ message: 'User or password is wrong.' });
+        }
+      }
     } else {
       // Check if password exists
       let passwordMatched;

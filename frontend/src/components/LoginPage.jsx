@@ -114,7 +114,7 @@ const LoginPage = () => {
           <input
             id="username"
             type="text"
-            placeholder="Username"
+            placeholder="Username or Email"
             value={username}
             onChange={(e) => setUser(e.target.value)}
             required
@@ -138,7 +138,7 @@ const LoginPage = () => {
       </form>
       
       <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
-          Back to chatbot?{" "}
+          Back to Chatbot?{" "}
           <Link to="/">
             <button className="submit-button" style={{ padding: "0.4rem 1rem", fontSize: "0.9rem" }}>
               Chatbot
