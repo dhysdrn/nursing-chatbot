@@ -1,6 +1,7 @@
 # Thee-AIdvisors
 
 This should be a living document! If you encounter problems or missing instructions, please add them to this document in a PR.  
+#### To contribute, please fork your own copy.
  
 ## Table of Contents
 
